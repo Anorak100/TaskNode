@@ -363,6 +363,7 @@ Add scripts to `package.json`:
 
 ```json
 {
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js"
@@ -439,6 +440,8 @@ Prisma Studio opens a browser UI at `http://localhost:5555` where you can view y
 
 Work through these steps in order. Each step has a **goal**, **implementation notes**, and a **checkpoint** to confirm it works before moving on.
 
+All backend code in this section uses **ES modules** (`import` / `export`). Ensure `"type": "module"` is set in `package.json` (see [Section 6.1](#61-initialize-the-node-project)). Use `.js` extensions on local import paths (e.g. `'./app.js'`).
+
 ---
 
 ### Step 1 — Project Scaffold
@@ -448,7 +451,7 @@ Work through these steps in order. Each step has a **goal**, **implementation no
 **Create `src/app.js`:**
 
 ```javascript
-const express = require('express');
+import express from 'express';
 
 const app = express();
 
@@ -458,14 +461,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-module.exports = app;
+export default app;
 ```
 
 **Create `src/index.js`:**
 
 ```javascript
-require('dotenv').config();
-const app = require('./app');
+import 'dotenv/config';
+import app from './app.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -507,11 +510,11 @@ pnpm exec prisma migrate dev --name init
 **Create a Prisma client singleton** at `src/config/db.js`:
 
 ```javascript
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-module.exports = prisma;
+export default prisma;
 ```
 
 Using a single instance avoids connection pool exhaustion during development with nodemon.
@@ -533,7 +536,7 @@ Confirm you see three tables: `User`, `Project`, `Task`.
 **Create `src/utils/password.js`:**
 
 ```javascript
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 const SALT_ROUNDS = 10;
 
@@ -545,13 +548,13 @@ async function comparePassword(password, hash) {
   return bcrypt.compare(password, hash);
 }
 
-module.exports = { hashPassword, comparePassword };
+export { hashPassword, comparePassword };
 ```
 
 **Create `src/utils/jwt.js`:**
 
 ```javascript
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 function signToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, {
@@ -563,16 +566,16 @@ function verifyToken(token) {
   return jwt.verify(token, process.env.JWT_SECRET);
 }
 
-module.exports = { signToken, verifyToken };
+export { signToken, verifyToken };
 ```
 
 **Create `src/controllers/auth.controller.js`:**
 
 ```javascript
-const prisma = require('../config/db');
-const { hashPassword, comparePassword } = require('../utils/password');
-const { signToken } = require('../utils/jwt');
-const { z } = require('zod');
+import prisma from '../config/db.js';
+import { hashPassword, comparePassword } from '../utils/password.js';
+import { signToken } from '../utils/jwt.js';
+import { z } from 'zod';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -628,27 +631,27 @@ async function login(req, res, next) {
   }
 }
 
-module.exports = { register, login };
+export { register, login };
 ```
 
 **Create `src/routes/auth.routes.js`:**
 
 ```javascript
-const { Router } = require('express');
-const { register, login } = require('../controllers/auth.controller');
+import { Router } from 'express';
+import { register, login } from '../controllers/auth.controller.js';
 
 const router = Router();
 
 router.post('/register', register);
 router.post('/login', login);
 
-module.exports = router;
+export default router;
 ```
 
 **Wire routes in `src/app.js`:**
 
 ```javascript
-const authRoutes = require('./routes/auth.routes');
+import authRoutes from './routes/auth.routes.js';
 
 // ... existing middleware ...
 
@@ -684,7 +687,7 @@ Expected: a JSON response with a `token` field. Save this token for the next ste
 **Create `src/middleware/auth.js`:**
 
 ```javascript
-const { verifyToken } = require('../utils/jwt');
+import { verifyToken } from '../utils/jwt.js';
 
 function authenticate(req, res, next) {
   const header = req.headers.authorization;
@@ -704,13 +707,13 @@ function authenticate(req, res, next) {
   }
 }
 
-module.exports = { authenticate };
+export { authenticate };
 ```
 
 Add a temporary test route in `src/app.js` to verify middleware works:
 
 ```javascript
-const { authenticate } = require('./middleware/auth');
+import { authenticate } from './middleware/auth.js';
 
 app.get('/api/me', authenticate, (req, res) => {
   res.json({ user: req.user });
@@ -743,8 +746,8 @@ Remove the `/api/me` test route once confirmed, or keep it as a useful debug end
 **Create `src/controllers/projects.controller.js`:**
 
 ```javascript
-const prisma = require('../config/db');
-const { z } = require('zod');
+import prisma from '../config/db.js';
+import { z } from 'zod';
 
 const createProjectSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -839,7 +842,7 @@ async function deleteProject(req, res, next) {
   }
 }
 
-module.exports = {
+export {
   listProjects,
   getProject,
   createProject,
@@ -851,15 +854,15 @@ module.exports = {
 **Create `src/routes/projects.routes.js`:**
 
 ```javascript
-const { Router } = require('express');
-const { authenticate } = require('../middleware/auth');
-const {
+import { Router } from 'express';
+import { authenticate } from '../middleware/auth.js';
+import {
   listProjects,
   getProject,
   createProject,
   updateProject,
   deleteProject,
-} = require('../controllers/projects.controller');
+} from '../controllers/projects.controller.js';
 
 const router = Router();
 
@@ -871,13 +874,13 @@ router.get('/:id', getProject);
 router.put('/:id', updateProject);
 router.delete('/:id', deleteProject);
 
-module.exports = router;
+export default router;
 ```
 
 **Wire in `src/app.js`:**
 
 ```javascript
-const projectRoutes = require('./routes/projects.routes');
+import projectRoutes from './routes/projects.routes.js';
 
 app.use('/api/projects', projectRoutes);
 ```
@@ -915,8 +918,8 @@ curl -X DELETE http://localhost:3000/api/projects/PROJECT_ID \
 **Create `src/controllers/tasks.controller.js`:**
 
 ```javascript
-const prisma = require('../config/db');
-const { z } = require('zod');
+import prisma from '../config/db.js';
+import { z } from 'zod';
 
 const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -1044,7 +1047,7 @@ async function deleteTask(req, res, next) {
   }
 }
 
-module.exports = {
+export {
   listTasks,
   getTask,
   createTask,
@@ -1056,15 +1059,15 @@ module.exports = {
 **Create `src/routes/tasks.routes.js`:**
 
 ```javascript
-const { Router } = require('express');
-const { authenticate } = require('../middleware/auth');
-const {
+import { Router } from 'express';
+import { authenticate } from '../middleware/auth.js';
+import {
   listTasks,
   getTask,
   createTask,
   updateTask,
   deleteTask,
-} = require('../controllers/tasks.controller');
+} from '../controllers/tasks.controller.js';
 
 // Nested routes: /api/projects/:projectId/tasks
 const projectTasksRouter = Router({ mergeParams: true });
@@ -1081,13 +1084,13 @@ taskRouter.get('/:id', getTask);
 taskRouter.put('/:id', updateTask);
 taskRouter.delete('/:id', deleteTask);
 
-module.exports = { projectTasksRouter, taskRouter };
+export { projectTasksRouter, taskRouter };
 ```
 
 **Wire in `src/app.js`:**
 
 ```javascript
-const { projectTasksRouter, taskRouter } = require('./routes/tasks.routes');
+import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
 
 app.use('/api/projects/:projectId/tasks', projectTasksRouter);
 app.use('/api/tasks', taskRouter);
@@ -1148,13 +1151,13 @@ function errorHandler(err, req, res, next) {
   res.status(500).json({ error: 'Internal server error' });
 }
 
-module.exports = { errorHandler };
+export { errorHandler };
 ```
 
 **Add to the bottom of `src/app.js`** (must be last middleware):
 
 ```javascript
-const { errorHandler } = require('./middleware/errorHandler');
+import { errorHandler } from './middleware/errorHandler.js';
 
 // ... all routes above ...
 
@@ -1401,7 +1404,7 @@ flowchart LR
 When the frontend runs on a different port (e.g., `localhost:5173`), add CORS to Express:
 
 ```javascript
-const cors = require('cors');
+import cors from 'cors';
 app.use(cors({ origin: 'http://localhost:5173' }));
 ```
 
