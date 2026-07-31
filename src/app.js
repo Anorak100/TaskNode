@@ -7,11 +7,12 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
 
+const app = express();
+
 app.use('/api/projects/:projectId/tasks', projectTasksRouter);
 app.use('/api/tasks', taskRouter);
 
 
-const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
