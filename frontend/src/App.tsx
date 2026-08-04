@@ -1,6 +1,5 @@
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { KanbanBoard } from '@/components/kanban-board'
 
 function App() {
   return (
@@ -18,14 +17,16 @@ function App() {
           </div>
         </header>
 
-        {/* Main Content (Trello-style Kanban Board) */}
+        {/* Main Content */}
         <main className="container mx-auto px-4 py-6 h-[calc(100vh-3.5rem)]">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold tracking-tight">Board</h2>
+              <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
             </div>
             
-            <KanbanBoard />
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground border-2 border-dashed rounded-lg border-border">
+              <p>Dashboard layout goes here...</p>
+            </div>
           </div>
         </main>
       </div>
