@@ -9,10 +9,27 @@ import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
 
 const app = express();
 
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use('/api/projects/:projectId/tasks', projectTasksRouter);
 app.use('/api/tasks', taskRouter);
-
-
 
 app.use(morgan('dev'));
 app.use(express.json());

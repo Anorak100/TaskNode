@@ -5,13 +5,20 @@ import {
   BarChart3,
   Settings,
   X,
+  LogOut,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "@/components/theme-provider"
+import { getStoredUser, logout } from "@/lib/auth"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => void }) {
   const { resolvedTheme } = useTheme()
+  const navigate = useNavigate()
+  const user = getStoredUser()
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", active: true },
     { icon: FolderKanban, label: "Projects", active: false },
@@ -19,6 +26,15 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
     { icon: BarChart3, label: "Analytics", active: false },
     { icon: Settings, label: "Settings", active: false },
   ]
+
+  const handleSignOut = () => {
+    const confirmed = window.confirm("Are you sure you want to sign out?")
+    if (!confirmed) return
+
+    logout()
+    navigate("/login", { replace: true })
+    window.location.replace("/login")
+  }
 
   return (
     <aside
@@ -73,12 +89,32 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
           <ThemeToggle />
         </div>
         <div className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 hover:bg-secondary/50">
-          <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="User" className="h-9 w-9 rounded-full" />
-          <div className="flex flex-col text-left">
-            <span className="mb-1 text-sm font-semibold leading-none">Israel Akoteyon</span>
-            <span className="text-xs leading-none text-muted-foreground">israel@example.com</span>
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={`https://i.pravatar.cc/150?u=${encodeURIComponent(user?.email || "tasknode")}`} alt={user?.name || "User"} />
+            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+              {user?.name
+                ?.split(" ")
+                .map((part) => part[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase() || "TN"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex min-w-0 flex-col text-left">
+            <span className="mb-1 text-sm font-semibold leading-none">{user?.name || "TaskNode User"}</span>
+            <span className="truncate text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</span>
           </div>
         </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full justify-start gap-2 rounded-lg"
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-4 w-4" />
+          Sign out
+        </Button>
       </div>
     </aside>
   )

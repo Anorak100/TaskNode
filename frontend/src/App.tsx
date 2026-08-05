@@ -1,6 +1,9 @@
 import { ThemeProvider } from '@/components/theme-provider'
 import { AppLayout } from '@/components/layout/app-layout'
 import { Dashboard } from '@/pages/dashboard'
+import { LoginPage } from '@/pages/auth/login'
+import { SignupPage } from '@/pages/auth/signup'
+import { isAuthenticated } from '@/lib/auth'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
@@ -8,9 +11,20 @@ function App() {
     <ThemeProvider defaultTheme="system" storageKey="task-manager-theme">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route
+            path="/login"
+            element={isAuthenticated() ? <Navigate to="/" replace /> : <LoginPage />}
+          />
+          <Route
+            path="/signup"
+            element={isAuthenticated() ? <Navigate to="/" replace /> : <SignupPage />}
+          />
+          <Route
+            path="/"
+            element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <Navigate to="/login" replace />}
+          />
           {/* We can add more routes here later, e.g., /projects/:id */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
