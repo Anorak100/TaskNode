@@ -8,8 +8,10 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useTheme } from "@/components/theme-provider"
 
 export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => void }) {
+  const { resolvedTheme } = useTheme()
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", active: true },
     { icon: FolderKanban, label: "Projects", active: false },
@@ -27,7 +29,7 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
     >
       <div className="mt-2 flex h-16 items-center justify-between border-b border-transparent px-4 md:px-6">
         <div className="flex items-center gap-2 text-xl font-bold tracking-tight text-primary">
-          <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-white/95 px-2 py-1.5 shadow-sm shadow-primary/5 dark:bg-slate-950/80 dark:shadow-none">
+          <div className="flex items-center gap-3">
             <img src="/tasknode_3.png" alt="TaskNode Logo" className="h-8 w-auto" />
             <div className="flex items-center text-[0.95rem] font-semibold tracking-tight">
               <span className="text-black dark:text-white">task</span>
@@ -65,7 +67,9 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
 
       <div className="mt-auto flex flex-col gap-4 border-t p-4">
         <div className="flex items-center justify-between px-2">
-          <span className="text-sm font-medium text-muted-foreground">Dark mode</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          </span>
           <ThemeToggle />
         </div>
         <div className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 hover:bg-secondary/50">
