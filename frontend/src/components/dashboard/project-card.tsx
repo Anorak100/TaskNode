@@ -70,7 +70,7 @@ export function ProjectCard({
         <div className="flex items-center justify-between border-t pt-4 mt-auto">
           <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground">
             <span>{tasksCount} Tasks</span>
-            <span>Due {dueDate}</span>
+            {dueDate ? <span>Due {dueDate}</span> : null}
           </div>
           <Badge variant={priorityStyles[priority].variant} className="rounded-md px-2 shadow-sm uppercase tracking-wider text-[10px]">
             {priorityStyles[priority].label}

@@ -56,7 +56,7 @@ async function fetchJson<T>(path: string): Promise<T> {
 }
 
 function formatDueDate(value: string | null) {
-  if (!value) return "No due date"
+  if (!value) return ""
 
   return new Intl.DateTimeFormat("en", {
     month: "short",
@@ -113,9 +113,15 @@ export async function getDashboardData(): Promise<DashboardStats> {
     const completed = tasks.filter((task) => task.status === "DONE").length
     const total = tasks.length
     const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
-    const nextDueTask = tasks
-      .filter((task) => task.dueDate)
-      .sort((a, b) => Number(new Date(a.dueDate as string)) - Number(new Date(b.dueDate as string)))[0]
+    // When there are no tasks, leave the project due date blank.
+    // Otherwise, find the farthest (latest) due date among the project's tasks.
+    const dueTasks = tasks.filter((task) => task.dueDate)
+    const latestDue = dueTasks.length
+      ? dueTasks.reduce((max, t) => {
+          const d = new Date(t.dueDate as string)
+          return d > max ? d : max
+        }, new Date(dueTasks[0].dueDate as string))
+      : null
 
     return {
       id: project.id,
@@ -123,7 +129,7 @@ export async function getDashboardData(): Promise<DashboardStats> {
       description: project.description || "No description yet.",
       progress,
       tasksCount: total,
-      dueDate: formatDueDate(nextDueTask?.dueDate ?? null),
+      dueDate: total === 0 ? "" : formatDueDate(latestDue ? latestDue.toISOString() : null),
       priority: resolvePriority(tasks),
     }
   })
