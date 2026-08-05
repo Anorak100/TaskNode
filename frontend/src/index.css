@@ -130,7 +130,7 @@
 
   html {
     color-scheme: light;
-    transition: background-color 300ms ease, color 300ms ease;
+    background-color: var(--background);
   }
 
   html.dark {
@@ -139,6 +139,5 @@
 
   body {
     @apply bg-background text-foreground;
-    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
   }
 }

@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/app-layout'
 import { Dashboard } from '@/pages/dashboard'
 import { LoginPage } from '@/pages/auth/login'
 import { SignupPage } from '@/pages/auth/signup'
+import { NewProjectPage } from '@/pages/projects/new-project'
 import { isAuthenticated } from '@/lib/auth'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
@@ -23,7 +24,10 @@ function App() {
             path="/"
             element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <Navigate to="/login" replace />}
           />
-          {/* We can add more routes here later, e.g., /projects/:id */}
+          <Route
+            path="/projects/new"
+            element={isAuthenticated() ? <AppLayout><NewProjectPage /></AppLayout> : <Navigate to="/login" replace />}
+          />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

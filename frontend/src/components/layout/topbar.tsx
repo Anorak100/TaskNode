@@ -1,8 +1,10 @@
 import { Bell, Menu, Search, Plus } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+  const navigate = useNavigate()
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6 md:px-8">
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -35,12 +37,21 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
           <Bell className="h-5 w-5 text-muted-foreground" />
         </Button>
 
-        <Button className="hidden h-9 gap-2 rounded-full px-4 font-medium sm:inline-flex">
+        <Button
+          className="hidden h-9 gap-2 rounded-full px-4 font-medium sm:inline-flex"
+          onClick={() => navigate("/projects/new")}
+        >
           <Plus className="h-4 w-4" />
           <span className="hidden md:inline">New Project</span>
         </Button>
 
-        <Button variant="ghost" size="icon" className="rounded-full sm:hidden" aria-label="Create new project">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full sm:hidden"
+          aria-label="Create new project"
+          onClick={() => navigate("/projects/new")}
+        >
           <Plus className="h-4 w-4" />
         </Button>
       </div>
