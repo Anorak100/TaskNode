@@ -27,7 +27,13 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
     >
       <div className="mt-2 flex h-16 items-center justify-between border-b border-transparent px-4 md:px-6">
         <div className="flex items-center gap-2 text-xl font-bold tracking-tight text-primary">
-          <img src="/tasknode_2.png" alt="TaskNode Logo" className="h-8 w-auto" />
+          <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-white/95 px-2 py-1.5 shadow-sm shadow-primary/5 dark:bg-slate-950/80 dark:shadow-none">
+            <img src="/tasknode_3.png" alt="TaskNode Logo" className="h-8 w-auto" />
+            <div className="flex items-center text-[0.95rem] font-semibold tracking-tight">
+              <span className="text-black dark:text-white">task</span>
+              <span className="text-blue-600">node</span>
+            </div>
+          </div>
         </div>
 
         <button
