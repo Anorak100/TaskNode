@@ -12,6 +12,7 @@ interface ProjectCardProps {
   tasksCount: number
   dueDate: string
   priority: "high" | "medium" | "low"
+  onClick?: () => void
 }
 
 export function ProjectCard({
@@ -22,7 +23,8 @@ export function ProjectCard({
   progress,
   tasksCount,
   dueDate,
-  priority
+  priority,
+  onClick
 }: ProjectCardProps) {
   
   const priorityStyles = {
@@ -38,7 +40,7 @@ export function ProjectCard({
   }
 
   return (
-    <Card className="rounded-[1.25rem] shadow-none flex flex-col transition-all hover:shadow-md cursor-pointer border-border">
+    <Card className="rounded-[1.25rem] shadow-none flex flex-col transition-all hover:shadow-md cursor-pointer border-border" onClick={onClick}>
       <CardContent className="p-6 flex-1 flex flex-col">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">

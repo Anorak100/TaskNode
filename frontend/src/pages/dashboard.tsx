@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { ProjectCard } from "@/components/dashboard/project-card"
 import { getStoredUser } from "@/lib/auth"
@@ -15,6 +16,7 @@ const iconPalette = [
 ]
 
 export function Dashboard() {
+  const navigate = useNavigate()
   const user = getStoredUser()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -97,6 +99,7 @@ export function Dashboard() {
             tasksCount={project.tasksCount}
             dueDate={project.dueDate}
             priority={project.priority}
+            onClick={() => navigate(`/projects/${project.id}/tasks`)}
           />
         ))}
       </div>
