@@ -189,73 +189,142 @@ export function ProjectTasksPage() {
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1fr,220px]">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      value={search}
-                      onChange={(event) => setSearch(event.target.value)}
-                      placeholder="Search tasks..."
-                      className="pl-11"
-                    />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Filter className="h-4 w-4" /> Filter
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setSortBy(sortBy === "dueDate" ? "title" : "dueDate")}>
-                      <SlidersHorizontal className="h-4 w-4" /> Sort: {sortBy === "dueDate" ? "Due date" : "Title"}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800">
-                  <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-800">
-                    <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950 dark:text-slate-400">
-                      <tr>
-                        <th className="px-5 py-4">Task</th>
-                        <th className="px-5 py-4">Status</th>
-                        <th className="px-5 py-4">Due Date</th>
-                        <th className="px-5 py-4">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
-                      {filteredTasks.length === 0 ? (
-                        <tr>
-                          <td colSpan={4} className="px-5 py-8 text-center text-sm text-muted-foreground">
-                            No tasks found.
-                          </td>
-                        </tr>
-                      ) : (
-                        filteredTasks.map((task) => (
-                          <tr
-                            key={task.id}
-                            className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-900 ${selectedTask?.id === task.id ? "bg-slate-100 dark:bg-slate-900" : ""}`}
-                            onClick={() => setSelectedTask(task)}
+            <div className="grid gap-4 lg:grid-cols-[1.8fr,320px]">
+              <div className="space-y-4">
+                {showNewTask ? (
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+                    <div className="flex items-center justify-between gap-3 pb-4">
+                      <div>
+                        <p className="text-sm font-semibold">Add new task</p>
+                        <p className="text-sm text-muted-foreground">Create a task for this project.</p>
+                      </div>
+                      <Button variant="ghost" onClick={() => setShowNewTask(false)}>
+                        Close
+                      </Button>
+                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Task title</label>
+                        <Input
+                          value={form.title}
+                          onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+                          placeholder="Design homepage"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Description</label>
+                        <textarea
+                          value={form.description}
+                          onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+                          placeholder="Design the new homepage for the website with modern UI and improved UX."
+                          className="min-h-28 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+                        />
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Status</label>
+                          <select
+                            value={form.status}
+                            onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as TaskStatus }))}
+                            className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
                           >
-                            <td className="px-5 py-4">
-                              <div className="font-medium">{task.title}</div>
-                              <div className="text-xs text-muted-foreground line-clamp-1">{task.description || "No description"}</div>
-                            </td>
-                            <td className="px-5 py-4">
-                              <Badge variant={statusMeta[task.status].badgeVariant as any} className="uppercase tracking-[0.15em] text-[10px]">
-                                {statusMeta[task.status].label}
-                              </Badge>
-                            </td>
-                            <td className="px-5 py-4 text-muted-foreground">{task.dueDate ? formatDueDate(task.dueDate) : "—"}</td>
-                            <td className="px-5 py-4">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={(event) => { event.stopPropagation(); removeTask(task.id) }}>
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                            {statusOrder.map((status) => (
+                              <option key={status} value={status}>
+                                {statusMeta[status].label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Due date</label>
+                          <Input
+                            type="date"
+                            value={form.dueDate}
+                            onChange={(event) => setForm((current) => ({ ...current, dueDate: event.target.value }))}
+                          />
+                        </div>
+                      </div>
+                      {error ? <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p> : null}
+                      <div className="flex items-center gap-3">
+                        <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                          {isSubmitting ? "Creating..." : "Create task"}
+                        </Button>
+                        <Button type="button" variant="outline" className="flex-1" onClick={() => setShowNewTask(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
+                ) : null}
+
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="relative flex-1">
+                      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        type="search"
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        placeholder="Search tasks..."
+                        className="pl-11"
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Filter className="h-4 w-4" /> Filter
+                      </Button>
+                      <Button variant="outline" size="sm" className="gap-2" onClick={() => setSortBy(sortBy === "dueDate" ? "title" : "dueDate")}> 
+                        <SlidersHorizontal className="h-4 w-4" /> Sort: {sortBy === "dueDate" ? "Due date" : "Title"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800">
+                    <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-800">
+                      <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950 dark:text-slate-400">
+                        <tr>
+                          <th className="px-5 py-4">Task</th>
+                          <th className="px-5 py-4">Status</th>
+                          <th className="px-5 py-4">Due Date</th>
+                          <th className="px-5 py-4">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
+                        {filteredTasks.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="px-5 py-8 text-center text-sm text-muted-foreground">
+                              No tasks found.
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                        ) : (
+                          filteredTasks.map((task) => (
+                            <tr
+                              key={task.id}
+                              className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-900 ${selectedTask?.id === task.id ? "bg-slate-100 dark:bg-slate-900" : ""}`}
+                              onClick={() => setSelectedTask(task)}
+                            >
+                              <td className="px-5 py-4">
+                                <div className="font-medium">{task.title}</div>
+                                <div className="text-xs text-muted-foreground line-clamp-1">{task.description || "No description"}</div>
+                              </td>
+                              <td className="px-5 py-4">
+                                <Badge variant={statusMeta[task.status].badgeVariant as any} className="uppercase tracking-[0.15em] text-[10px]">
+                                  {statusMeta[task.status].label}
+                                </Badge>
+                              </td>
+                              <td className="px-5 py-4 text-muted-foreground">{task.dueDate ? formatDueDate(task.dueDate) : "—"}</td>
+                              <td className="px-5 py-4">
+                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={(event) => { event.stopPropagation(); removeTask(task.id) }}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
@@ -312,69 +381,6 @@ export function ProjectTasksPage() {
                     )}
                   </CardContent>
                 </Card>
-
-                {showNewTask ? (
-                  <Card className="border shadow-sm">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Add new task</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Task title</label>
-                          <Input
-                            value={form.title}
-                            onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-                            placeholder="Design homepage"
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Description</label>
-                          <textarea
-                            value={form.description}
-                            onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-                            placeholder="Design the new homepage for the website with modern UI and improved UX."
-                            className="min-h-28 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
-                          />
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Status</label>
-                            <select
-                              value={form.status}
-                              onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as TaskStatus }))}
-                              className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                              {statusOrder.map((status) => (
-                                <option key={status} value={status}>
-                                  {statusMeta[status].label}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Due date</label>
-                            <Input
-                              type="date"
-                              value={form.dueDate}
-                              onChange={(event) => setForm((current) => ({ ...current, dueDate: event.target.value }))}
-                            />
-                          </div>
-                        </div>
-                        {error ? <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p> : null}
-                        <div className="flex items-center gap-3">
-                          <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                            {isSubmitting ? "Creating..." : "Create task"}
-                          </Button>
-                          <Button type="button" variant="outline" className="flex-1" onClick={() => setShowNewTask(false)}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </CardContent>
-                  </Card>
-                ) : null}
               </div>
             </div>
           </div>
