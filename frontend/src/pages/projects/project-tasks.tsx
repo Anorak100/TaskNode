@@ -138,7 +138,7 @@ export function ProjectTasksPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.8fr,1fr]">
+      <div className="grid gap-6 md:grid-cols-[1.8fr_300px] lg:grid-cols-[1.8fr_320px] xl:grid-cols-[1.8fr_1fr]">
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -189,9 +189,8 @@ export function ProjectTasksPage() {
               </div>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.8fr,320px]">
-              <div className="space-y-4">
-                {showNewTask ? (
+            <div className="space-y-4">
+              {showNewTask ? (
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
                     <div className="flex items-center justify-between gap-3 pb-4">
                       <div>
@@ -287,7 +286,6 @@ export function ProjectTasksPage() {
                           <th className="px-5 py-4">Task</th>
                           <th className="px-5 py-4">Status</th>
                           <th className="px-5 py-4">Due Date</th>
-                          <th className="px-5 py-4">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
@@ -314,11 +312,6 @@ export function ProjectTasksPage() {
                                 </Badge>
                               </td>
                               <td className="px-5 py-4 text-muted-foreground">{task.dueDate ? formatDueDate(task.dueDate) : "—"}</td>
-                              <td className="px-5 py-4">
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={(event) => { event.stopPropagation(); removeTask(task.id) }}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </td>
                             </tr>
                           ))
                         )}
@@ -326,64 +319,63 @@ export function ProjectTasksPage() {
                     </table>
                   </div>
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                <Card className="border shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Task details</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {selectedTask ? (
-                      <div className="space-y-5">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between gap-4">
-                            <h2 className="text-xl font-semibold">{selectedTask.title}</h2>
-                            <Badge variant={statusMeta[selectedTask.status].badgeVariant as any} className="uppercase tracking-[0.15em] text-[10px]">
-                              {statusMeta[selectedTask.status].label}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{selectedTask.description || "No description added yet."}</p>
-                        </div>
-
-                        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900">
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between text-muted-foreground">
-                              <span>Project</span>
-                              <span>{project?.name ?? "—"}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-muted-foreground">
-                              <span>Due Date</span>
-                              <span>{selectedTask.dueDate ? formatDueDate(selectedTask.dueDate) : "No due date"}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-muted-foreground">
-                              <span>Status</span>
-                              <span>{statusMeta[selectedTask.status].label}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-muted-foreground">
-                              <span>Created</span>
-                              <span>{new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(selectedTask.createdAt))}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-3 sm:flex-row">
-                          <Button className="w-full" onClick={() => toggleStatus(selectedTask)}>
-                            {selectedTask.status === "DONE" ? "Mark as pending" : "Mark as done"}
-                          </Button>
-                          <Button variant="outline" className="w-full" onClick={() => removeTask(selectedTask.id)}>
-                            Delete task
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Select a task to view details.</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
             </div>
           </div>
+        </div>
+
+        <div className="space-y-4">
+          <Card className="border shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Task details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedTask ? (
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-4">
+                      <h2 className="text-xl font-semibold">{selectedTask.title}</h2>
+                      <Badge variant={statusMeta[selectedTask.status].badgeVariant as any} className="uppercase tracking-[0.15em] text-[10px]">
+                        {statusMeta[selectedTask.status].label}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{selectedTask.description || "No description added yet."}</p>
+                  </div>
+
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-muted-foreground">
+                        <span>Project</span>
+                        <span>{project?.name ?? "—"}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-muted-foreground">
+                        <span>Due Date</span>
+                        <span>{selectedTask.dueDate ? formatDueDate(selectedTask.dueDate) : "No due date"}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-muted-foreground">
+                        <span>Status</span>
+                        <span>{statusMeta[selectedTask.status].label}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-muted-foreground">
+                        <span>Created</span>
+                        <span>{new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(selectedTask.createdAt))}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Button className="w-full" onClick={() => toggleStatus(selectedTask)}>
+                      {selectedTask.status === "DONE" ? "Mark as pending" : "Mark as done"}
+                    </Button>
+                    <Button variant="outline" className="w-full" onClick={() => removeTask(selectedTask.id)}>
+                      Delete task
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Select a task to view details.</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
