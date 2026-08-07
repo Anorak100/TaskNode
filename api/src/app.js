@@ -28,12 +28,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/projects/:projectId/tasks', projectTasksRouter);
-app.use('/api/tasks', taskRouter);
-
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use('/api/projects/:projectId/tasks', projectTasksRouter);
+app.use('/api/tasks', taskRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 

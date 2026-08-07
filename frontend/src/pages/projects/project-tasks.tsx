@@ -43,6 +43,8 @@ export function ProjectTasksPage() {
   const [showNewTask, setShowNewTask] = useState(false)
   const [form, setForm] = useState({ title: "", description: "", status: "TODO" as TaskStatus, dueDate: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [editingTask, setEditingTask] = useState<TaskRecord | null>(null)
+  const [editForm, setEditForm] = useState({ title: "", description: "", status: "TODO" as TaskStatus, dueDate: "" })
 
   const loadData = async () => {
     if (!projectId) return
@@ -108,6 +110,27 @@ export function ProjectTasksPage() {
     }
   }
 
+  const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editingTask || !editForm.title.trim()) return
+
+    try {
+      setIsSubmitting(true)
+      await updateTask(editingTask.id, {
+        title: editForm.title.trim(),
+        description: editForm.description.trim() || null,
+        status: editForm.status,
+        dueDate: editForm.dueDate || null,
+      })
+      setEditingTask(null)
+      await loadData()
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to update task")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   const toggleStatus = async (task: TaskRecord) => {
     const nextStatus: TaskStatus = task.status === "DONE" ? "TODO" : "DONE"
     try {
@@ -129,16 +152,18 @@ export function ProjectTasksPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-        <Button variant="ghost" size="icon" className="rounded-full" onClick={() => navigate("/", { replace: true })}>
+      <div className="flex items-center">
+        <Button 
+          variant="ghost" 
+          className="gap-2 pl-0 text-blue-600 hover:text-blue-700 hover:bg-transparent dark:text-blue-400 dark:hover:text-blue-300" 
+          onClick={() => navigate("/", { replace: true })}
+        >
           <ArrowLeft className="h-4 w-4" />
+          Back to Projects
         </Button>
-        <div>
-          <p className="text-sm text-muted-foreground">Back to Projects</p>
-        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[1.8fr_300px] lg:grid-cols-[1.8fr_320px] xl:grid-cols-[1.8fr_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.8fr_320px] 2xl:grid-cols-[1.8fr_1fr]">
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -171,9 +196,9 @@ export function ProjectTasksPage() {
                 <div className="h-3 rounded-full bg-blue-600" style={{ width: `${completedPercent}%` }} />
               </div>
             </div>
-          </div>
+            
+            <hr className="my-6 border-slate-200 dark:border-slate-800" />
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <div className="flex flex-wrap items-center justify-between gap-3 pb-5">
               <div className="flex flex-wrap gap-3">
                 {statusTabs.map((tab) => (
@@ -279,13 +304,13 @@ export function ProjectTasksPage() {
                     </div>
                   </div>
 
-                  <div className="mt-4 overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800">
+                  <div className="mt-4 overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-800">
                     <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-800">
                       <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950 dark:text-slate-400">
                         <tr>
-                          <th className="px-5 py-4">Task</th>
-                          <th className="px-5 py-4">Status</th>
-                          <th className="px-5 py-4">Due Date</th>
+                          <th className="w-full px-5 py-4">Task</th>
+                          <th className="whitespace-nowrap px-5 py-4">Status</th>
+                          <th className="whitespace-nowrap px-5 py-4">Due Date</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-950">
@@ -300,7 +325,7 @@ export function ProjectTasksPage() {
                             <tr
                               key={task.id}
                               className={`cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-900 ${selectedTask?.id === task.id ? "bg-slate-100 dark:bg-slate-900" : ""}`}
-                              onClick={() => setSelectedTask(task)}
+                              onClick={() => { setSelectedTask(task); setEditingTask(null); }}
                             >
                               <td className="px-5 py-4">
                                 <div className="font-medium">{task.title}</div>
@@ -323,13 +348,63 @@ export function ProjectTasksPage() {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Card className="border shadow-sm">
+        <div className="h-full">
+          <Card className="h-full border shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Task details</CardTitle>
             </CardHeader>
             <CardContent>
-              {selectedTask ? (
+              {editingTask ? (
+                <form onSubmit={handleEditSubmit} className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-semibold">Edit Task</h2>
+                    <Button type="button" variant="ghost" onClick={() => setEditingTask(null)}>Cancel</Button>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Task title</label>
+                    <Input
+                      value={editForm.title}
+                      onChange={(e) => setEditForm((c) => ({ ...c, title: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Description</label>
+                    <textarea
+                      value={editForm.description}
+                      onChange={(e) => setEditForm((c) => ({ ...c, description: e.target.value }))}
+                      className="min-h-28 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+                    />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Status</label>
+                      <select
+                        value={editForm.status}
+                        onChange={(e) => setEditForm((c) => ({ ...c, status: e.target.value as TaskStatus }))}
+                        className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {statusOrder.map((status) => (
+                          <option key={status} value={status}>
+                            {statusMeta[status].label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Due date</label>
+                      <Input
+                        type="date"
+                        value={editForm.dueDate}
+                        onChange={(e) => setEditForm((c) => ({ ...c, dueDate: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Saving..." : "Save changes"}
+                  </Button>
+                </form>
+              ) : selectedTask ? (
                 <div className="space-y-5">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-4">
@@ -362,13 +437,26 @@ export function ProjectTasksPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-3 sm:flex-row">
+                  <div className="flex flex-col gap-3 w-full">
                     <Button className="w-full" onClick={() => toggleStatus(selectedTask)}>
                       {selectedTask.status === "DONE" ? "Mark as pending" : "Mark as done"}
                     </Button>
-                    <Button variant="outline" className="w-full" onClick={() => removeTask(selectedTask.id)}>
-                      Delete task
-                    </Button>
+                    <div className="flex gap-3">
+                      <Button variant="outline" className="w-full" onClick={() => {
+                        setEditingTask(selectedTask)
+                        setEditForm({
+                          title: selectedTask.title,
+                          description: selectedTask.description || "",
+                          status: selectedTask.status,
+                          dueDate: selectedTask.dueDate ? selectedTask.dueDate.substring(0, 10) : "",
+                        })
+                      }}>
+                        Edit task
+                      </Button>
+                      <Button variant="outline" className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => removeTask(selectedTask.id)}>
+                        Delete task
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : (
