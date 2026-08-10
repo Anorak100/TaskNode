@@ -159,7 +159,7 @@ export function ProjectTasksPage() {
           onClick={() => navigate("/", { replace: true })}
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Projects
+          Back to Dashboard
         </Button>
       </div>
 

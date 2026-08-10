@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { ProjectCard } from "@/components/dashboard/project-card"
 import { getStoredUser } from "@/lib/auth"
 import { getDashboardData, type DashboardStats } from "@/lib/dashboard-data"
+import { updateProject, deleteProject } from "@/lib/projects"
 import { FileText, CheckCircle2, LayoutTemplate, CalendarClock, Plane, BookOpen, Code2, Briefcase } from "lucide-react"
 
 const iconPalette = [
@@ -20,6 +23,8 @@ export function Dashboard() {
   const user = getStoredUser()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [editingProject, setEditingProject] = useState<{ id: string; name: string; description: string } | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
   const displayName = user?.name || "there"
@@ -43,6 +48,38 @@ export function Dashboard() {
     if (!stats || stats.totalTasks === 0) return 0
     return Math.round((stats.completedTasks / stats.totalTasks) * 100)
   }, [stats])
+
+  const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!window.confirm("Are you sure you want to delete this project? All tasks inside it will be lost.")) return
+    
+    try {
+      await deleteProject(projectId)
+      const newData = await getDashboardData()
+      setStats(newData)
+    } catch (err: any) {
+      setError(err.message || "Failed to delete project")
+    }
+  }
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingProject) return
+    setIsSubmitting(true)
+    try {
+      await updateProject(editingProject.id, {
+        name: editingProject.name,
+        description: editingProject.description,
+      })
+      setEditingProject(null)
+      const newData = await getDashboardData()
+      setStats(newData)
+    } catch (err: any) {
+      setError(err.message || "Failed to update project")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="max-w-6xl w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -109,9 +146,48 @@ export function Dashboard() {
             dueDate={project.dueDate}
             priority={project.priority}
             onClick={() => navigate(`/projects/${project.id}/tasks`)}
+            onDelete={(e) => handleDeleteProject(project.id, e)}
+            onEdit={(e) => {
+              e.stopPropagation()
+              setEditingProject({ id: project.id, name: project.name, description: project.description || "" })
+            }}
           />
         ))}
       </div>
+
+      {editingProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-950">
+            <h2 className="mb-4 text-xl font-bold">Edit Project</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Project Name</label>
+                <Input
+                  value={editingProject.name}
+                  onChange={(e) => setEditingProject(c => c ? { ...c, name: e.target.value } : null)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  value={editingProject.description}
+                  onChange={(e) => setEditingProject(c => c ? { ...c, description: e.target.value } : null)}
+                  className="min-h-[100px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingProject(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

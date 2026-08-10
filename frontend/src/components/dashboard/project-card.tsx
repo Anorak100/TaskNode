@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { MoreVertical } from "lucide-react"
+import { MoreVertical, Pencil, Trash2 } from "lucide-react"
 
 interface ProjectCardProps {
   icon: React.ReactNode
@@ -13,6 +13,8 @@ interface ProjectCardProps {
   dueDate: string
   priority: "high" | "medium" | "low"
   onClick?: () => void
+  onEdit?: (e: React.MouseEvent) => void
+  onDelete?: (e: React.MouseEvent) => void
 }
 
 export function ProjectCard({
@@ -24,7 +26,9 @@ export function ProjectCard({
   tasksCount,
   dueDate,
   priority,
-  onClick
+  onClick,
+  onEdit,
+  onDelete
 }: ProjectCardProps) {
   
   const priorityStyles = {
@@ -40,7 +44,7 @@ export function ProjectCard({
   }
 
   return (
-    <Card className="rounded-[1.25rem] shadow-none flex flex-col transition-all hover:shadow-md cursor-pointer border-border" onClick={onClick}>
+    <Card className="group rounded-[1.25rem] shadow-none flex flex-col transition-all hover:shadow-md cursor-pointer border-border relative overflow-hidden" onClick={onClick}>
       <CardContent className="p-6 flex-1 flex flex-col">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -49,9 +53,26 @@ export function ProjectCard({
             </div>
             <h3 className="font-semibold text-lg leading-none tracking-tight">{title}</h3>
           </div>
-          <button className="text-muted-foreground hover:bg-secondary rounded-md p-1 -mr-2">
-            <MoreVertical className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 top-4">
+            {onEdit && (
+              <button 
+                onClick={onEdit}
+                className="text-muted-foreground hover:bg-secondary rounded-md p-1.5 transition-colors hover:text-blue-600"
+                title="Edit Project"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+            {onDelete && (
+              <button 
+                onClick={onDelete}
+                className="text-muted-foreground hover:bg-destructive/10 rounded-md p-1.5 transition-colors hover:text-destructive"
+                title="Delete Project"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
         
         <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-6 flex-1">

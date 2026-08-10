@@ -41,3 +41,39 @@ export async function createProject(name: string, description: string) {
 
   return parseResponse<CreatedProject>(response)
 }
+
+export async function updateProject(projectId: string, updates: { name?: string; description?: string }) {
+  const token = getStoredToken()
+
+  if (!token) {
+    throw new Error("You must be signed in to update a project")
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updates),
+  })
+
+  return parseResponse<CreatedProject>(response)
+}
+
+export async function deleteProject(projectId: string) {
+  const token = getStoredToken()
+
+  if (!token) {
+    throw new Error("You must be signed in to delete a project")
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  return parseResponse<void>(response)
+}
