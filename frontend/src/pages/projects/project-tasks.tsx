@@ -98,7 +98,7 @@ export function ProjectTasksPage() {
         title: form.title.trim(),
         description: form.description.trim() || undefined,
         status: form.status,
-        dueDate: form.dueDate || undefined,
+        dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : undefined,
       })
       setForm({ title: "", description: "", status: "TODO", dueDate: "" })
       setShowNewTask(false)
@@ -120,7 +120,7 @@ export function ProjectTasksPage() {
         title: editForm.title.trim(),
         description: editForm.description.trim() || null,
         status: editForm.status,
-        dueDate: editForm.dueDate || null,
+        dueDate: editForm.dueDate ? new Date(editForm.dueDate).toISOString() : null,
       })
       setEditingTask(null)
       await loadData()
@@ -262,11 +262,25 @@ export function ProjectTasksPage() {
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Due date</label>
-                          <Input
-                            type="date"
-                            value={form.dueDate}
-                            onChange={(event) => setForm((current) => ({ ...current, dueDate: event.target.value }))}
-                          />
+                          <div className="relative">
+                            <Input
+                              type="date"
+                              value={form.dueDate}
+                              min={new Date().toISOString().split("T")[0]}
+                              className={!form.dueDate ? "text-transparent" : ""}
+                              onClick={(e) => {
+                                try {
+                                  (e.currentTarget as any).showPicker?.()
+                                } catch (err) {}
+                              }}
+                              onChange={(event) => setForm((current) => ({ ...current, dueDate: event.target.value }))}
+                            />
+                            {!form.dueDate && (
+                              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                                Select a date
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       {error ? <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p> : null}
@@ -393,11 +407,25 @@ export function ProjectTasksPage() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Due date</label>
-                      <Input
-                        type="date"
-                        value={editForm.dueDate}
-                        onChange={(e) => setEditForm((c) => ({ ...c, dueDate: e.target.value }))}
-                      />
+                      <div className="relative">
+                        <Input
+                          type="date"
+                          value={editForm.dueDate}
+                          min={new Date().toISOString().split("T")[0]}
+                          className={!editForm.dueDate ? "text-transparent" : ""}
+                          onClick={(e) => {
+                            try {
+                              (e.currentTarget as any).showPicker?.()
+                            } catch (err) {}
+                          }}
+                          onChange={(e) => setEditForm((c) => ({ ...c, dueDate: e.target.value }))}
+                        />
+                        {!editForm.dueDate && (
+                          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                            Select a date
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
