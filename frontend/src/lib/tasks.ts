@@ -56,6 +56,19 @@ export async function getProjectTasks(projectId: string) {
   return parseResponse<TaskRecord[]>(response)
 }
 
+export async function getAllTasks() {
+  const token = getStoredToken()
+  const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+
+  return parseResponse<(TaskRecord & { project?: { name: string } })[]>(response)
+}
+
+
 export async function createTask(projectId: string, payload: { title: string; description?: string; status?: TaskStatus; dueDate?: string }) {
   const token = getStoredToken()
   if (!token) {

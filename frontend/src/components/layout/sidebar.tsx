@@ -13,19 +13,27 @@ import { useTheme } from "@/components/theme-provider"
 import { getStoredUser, logout } from "@/lib/auth"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => void }) {
   const { resolvedTheme } = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const user = getStoredUser()
   const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: true },
-    { icon: FolderKanban, label: "Projects", active: false },
-    { icon: CalendarDays, label: "Calendar", active: false },
-    { icon: BarChart3, label: "Analytics", active: false },
-    { icon: Settings, label: "Settings", active: false },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+    { icon: FolderKanban, label: "Projects", path: "/" },
+    { icon: CalendarDays, label: "Calendar", path: "/calendar" },
+    { icon: BarChart3, label: "Analytics", path: "/analytics" },
+    { icon: Settings, label: "Settings", path: "/settings" },
   ]
+
+  const isActive = (path: string, label: string) => {
+    if (label === "Dashboard" && location.pathname === "/") return true
+    if (label === "Projects" && location.pathname.startsWith("/projects")) return true
+    if (label !== "Dashboard" && label !== "Projects" && location.pathname === path) return true
+    return false
+  }
 
   const handleSignOut = () => {
     const confirmed = window.confirm("Are you sure you want to sign out?")
@@ -65,20 +73,37 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
       </div>
 
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-6">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-              item.active
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
-            )}
-          >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const active = isActive(item.path, item.label)
+          return (
+            <button
+              key={item.label}
+              onClick={() => {
+                if (item.label === "Projects") {
+                  if (location.pathname === "/") {
+                    document.getElementById("projects-section")?.scrollIntoView({ behavior: "smooth" })
+                    // Also update the URL hash without a full navigation so it's clean
+                    window.history.pushState(null, "", "/#projects-section")
+                  } else {
+                    navigate("/#projects-section")
+                  }
+                } else {
+                  navigate(item.path)
+                }
+                onClose?.()
+              }}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.label}
+            </button>
+          )
+        })}
       </div>
 
       <div className="mt-auto flex flex-col gap-4 border-t p-4">

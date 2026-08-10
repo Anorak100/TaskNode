@@ -23,17 +23,27 @@ async function verifyProjectOwnership(projectId, userId) {
 
 async function listTasks(req, res, next) {
   try {
-    const project = await verifyProjectOwnership(req.params.projectId, req.user.id);
+    const projectId = req.params.projectId;
 
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
+    if (projectId) {
+      const project = await verifyProjectOwnership(projectId, req.user.id);
+      if (!project) {
+        return res.status(404).json({ error: 'Project not found' });
+      }
+
+      const tasks = await prisma.task.findMany({
+        where: { projectId },
+        orderBy: { createdAt: 'desc' },
+      });
+      return res.json(tasks);
     }
 
+    // If no projectId, fetch all tasks for the current user
     const tasks = await prisma.task.findMany({
-      where: { projectId: req.params.projectId },
-      orderBy: { createdAt: 'desc' },
+      where: { project: { userId: req.user.id } },
+      include: { project: { select: { name: true } } },
+      orderBy: { dueDate: 'asc' },
     });
-
     res.json(tasks);
   } catch (err) {
     next(err);

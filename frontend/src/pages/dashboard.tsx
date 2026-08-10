@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { ProjectCard } from "@/components/dashboard/project-card"
 import { getStoredUser } from "@/lib/auth"
@@ -23,6 +23,15 @@ export function Dashboard() {
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
   const displayName = user?.name || "there"
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.hash === "#projects-section") {
+      setTimeout(() => {
+        document.getElementById("projects-section")?.scrollIntoView({ behavior: "smooth" })
+      }, 100)
+    }
+  }, [location.hash, stats])
 
   useEffect(() => {
     getDashboardData()
@@ -79,7 +88,7 @@ export function Dashboard() {
         />
       </div>
 
-      <div className="flex items-center justify-between mb-6">
+      <div id="projects-section" className="flex items-center justify-between mb-6 scroll-mt-24">
         <h2 className="text-xl font-bold">Projects</h2>
         <div className="flex items-center gap-4 text-sm font-semibold text-muted-foreground">
           <button className="hover:text-foreground transition-colors">All Projects ˅</button>
