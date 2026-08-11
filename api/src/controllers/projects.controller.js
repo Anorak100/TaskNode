@@ -4,6 +4,7 @@ import { z } from 'zod';
 const createProjectSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
+  icon: z.string().optional(),
 });
 
 const updateProjectSchema = z.object({
@@ -55,7 +56,7 @@ async function createProject(req, res, next) {
 
 async function updateProject(req, res, next) {
   try {
-    const data = updateProjectSchema.parse(req.body);
+    const { name, description, icon } = req.body;
 
     const existing = await prisma.project.findFirst({
       where: { id: req.params.id, userId: req.user.id },
@@ -67,7 +68,11 @@ async function updateProject(req, res, next) {
 
     const project = await prisma.project.update({
       where: { id: req.params.id },
-      data,
+      data: {
+        name,
+        description,
+        icon,
+      },
     });
 
     res.json(project);

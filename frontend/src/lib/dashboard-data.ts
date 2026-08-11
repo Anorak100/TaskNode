@@ -6,6 +6,7 @@ export type ProjectRecord = {
   id: string
   name: string
   description: string | null
+  icon: string
   userId: string
   createdAt: string
 }
@@ -24,6 +25,7 @@ export type DashboardProjectSummary = {
   id: string
   name: string
   description: string
+  icon: string
   progress: number
   tasksCount: number
   dueDate: string
@@ -127,6 +129,7 @@ export async function getDashboardData(): Promise<DashboardStats> {
       id: project.id,
       name: project.name,
       description: project.description || "No description yet.",
+      icon: project.icon,
       progress,
       tasksCount: total,
       dueDate: total === 0 ? "" : formatDueDate(latestDue ? latestDue.toISOString() : null),

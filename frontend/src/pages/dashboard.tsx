@@ -7,23 +7,15 @@ import { ProjectCard } from "@/components/dashboard/project-card"
 import { getStoredUser } from "@/lib/auth"
 import { getDashboardData, type DashboardStats } from "@/lib/dashboard-data"
 import { updateProject, deleteProject } from "@/lib/projects"
-import { FileText, CheckCircle2, LayoutTemplate, CalendarClock, Plane, BookOpen, Code2, Briefcase } from "lucide-react"
-
-const iconPalette = [
-  { icon: <LayoutTemplate className="w-5 h-5" />, iconBg: "bg-blue-500" },
-  { icon: <BookOpen className="w-5 h-5" />, iconBg: "bg-emerald-500" },
-  { icon: <Briefcase className="w-5 h-5" />, iconBg: "bg-purple-500" },
-  { icon: <CheckCircle2 className="w-5 h-5" />, iconBg: "bg-amber-500" },
-  { icon: <Code2 className="w-5 h-5" />, iconBg: "bg-rose-500" },
-  { icon: <Plane className="w-5 h-5" />, iconBg: "bg-cyan-500" },
-]
+import { FileText, CheckCircle2, LayoutTemplate, CalendarClock } from "lucide-react"
+import { PROJECT_ICONS, getProjectIcon } from "@/lib/icons"
 
 export function Dashboard() {
   const navigate = useNavigate()
   const user = getStoredUser()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [editingProject, setEditingProject] = useState<{ id: string; name: string; description: string } | null>(null)
+  const [editingProject, setEditingProject] = useState<{ id: string; name: string; description: string; icon: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
@@ -70,6 +62,7 @@ export function Dashboard() {
       await updateProject(editingProject.id, {
         name: editingProject.name,
         description: editingProject.description,
+        icon: editingProject.icon,
       })
       setEditingProject(null)
       const newData = await getDashboardData()
@@ -134,25 +127,29 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {(stats?.projects ?? []).map((project, index) => (
-          <ProjectCard
-            key={project.id}
-            title={project.name}
-            description={project.description}
-            icon={iconPalette[index % iconPalette.length].icon}
-            iconBg={iconPalette[index % iconPalette.length].iconBg}
-            progress={project.progress}
-            tasksCount={project.tasksCount}
-            dueDate={project.dueDate}
-            priority={project.priority}
-            onClick={() => navigate(`/projects/${project.id}/tasks`)}
-            onDelete={(e) => handleDeleteProject(project.id, e)}
-            onEdit={(e) => {
-              e.stopPropagation()
-              setEditingProject({ id: project.id, name: project.name, description: project.description || "" })
-            }}
-          />
-        ))}
+        {(stats?.projects ?? []).map((project) => {
+          const projectIcon = getProjectIcon(project.icon)
+          const IconComp = projectIcon.icon
+          return (
+            <ProjectCard
+              key={project.id}
+              title={project.name}
+              description={project.description}
+              icon={<IconComp className="w-5 h-5" />}
+              iconBg={projectIcon.bg}
+              progress={project.progress}
+              tasksCount={project.tasksCount}
+              dueDate={project.dueDate}
+              priority={project.priority}
+              onClick={() => navigate(`/projects/${project.id}/tasks`)}
+              onDelete={(e) => handleDeleteProject(project.id, e)}
+              onEdit={(e) => {
+                e.stopPropagation()
+                setEditingProject({ id: project.id, name: project.name, description: project.description || "", icon: project.icon || "layout" })
+              }}
+            />
+          )
+        })}
       </div>
 
       {editingProject && (
@@ -168,6 +165,31 @@ export function Dashboard() {
                   required
                 />
               </div>
+              
+              <div className="space-y-3">
+                <label className="text-sm font-medium">Project Icon</label>
+                <div className="grid grid-cols-8 gap-2">
+                  {PROJECT_ICONS.map((icon) => {
+                    const IconComponent = icon.icon
+                    const isSelected = editingProject.icon === icon.id
+                    return (
+                      <button
+                        key={icon.id}
+                        type="button"
+                        onClick={() => setEditingProject(c => c ? { ...c, icon: icon.id } : null)}
+                        className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
+                          isSelected
+                            ? `${icon.bg} text-white shadow-md scale-110`
+                            : `bg-slate-50 text-slate-400 hover:text-slate-600 dark:bg-slate-900 ${icon.hover}`
+                        }`}
+                      >
+                        <IconComponent className="h-5 w-5" />
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Description</label>
                 <textarea

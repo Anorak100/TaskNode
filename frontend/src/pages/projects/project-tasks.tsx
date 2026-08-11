@@ -226,10 +226,11 @@ export function ProjectTasksPage() {
                         Close
                       </Button>
                     </div>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Task title</label>
                         <Input
+                          autoComplete="off"
                           value={form.title}
                           onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
                           placeholder="Design homepage"
@@ -239,6 +240,7 @@ export function ProjectTasksPage() {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Description</label>
                         <textarea
+                          autoComplete="off"
                           value={form.description}
                           onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
                           placeholder="Design the new homepage for the website with modern UI and improved UX."
@@ -265,6 +267,7 @@ export function ProjectTasksPage() {
                           <div className="relative">
                             <Input
                               type="date"
+                              autoComplete="off"
                               value={form.dueDate}
                               min={new Date().toISOString().split("T")[0]}
                               className={!form.dueDate ? "text-transparent" : ""}

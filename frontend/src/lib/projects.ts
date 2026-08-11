@@ -6,6 +6,7 @@ type CreatedProject = {
   id: string
   name: string
   description: string | null
+  icon: string
   userId: number
   createdAt: string
 }
@@ -20,7 +21,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return data as T
 }
 
-export async function createProject(name: string, description: string) {
+export async function createProject(name: string, description: string, icon?: string) {
   const token = getStoredToken()
 
   if (!token) {
@@ -36,13 +37,14 @@ export async function createProject(name: string, description: string) {
     body: JSON.stringify({
       name,
       description: description.trim() || undefined,
+      icon,
     }),
   })
 
   return parseResponse<CreatedProject>(response)
 }
 
-export async function updateProject(projectId: string, updates: { name?: string; description?: string }) {
+export async function updateProject(projectId: string, updates: { name?: string; description?: string; icon?: string }) {
   const token = getStoredToken()
 
   if (!token) {
