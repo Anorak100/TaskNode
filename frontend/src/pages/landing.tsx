@@ -683,8 +683,8 @@ export function LandingPage() {
         <div className="mt-12 text-center text-xs text-slate-400 dark:text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-100 dark:border-slate-900 pt-6">
           <p>© {new Date().getFullYear()} tasknode. All rights reserved.</p>
           <div className="flex gap-4">
-            <a href="#" className="hover:underline">Privacy Policy</a>
-            <a href="#" className="hover:underline">Terms of Service</a>
+            <Link to="/privacy" className="hover:underline">Privacy Policy</Link>
+            <Link to="/terms" className="hover:underline">Terms of Service</Link>
           </div>
         </div>
       </section>
