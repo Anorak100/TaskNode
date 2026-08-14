@@ -7,7 +7,7 @@ import { ProjectCard } from "@/components/dashboard/project-card"
 import { getStoredUser } from "@/lib/auth"
 import { getDashboardData, type DashboardStats } from "@/lib/dashboard-data"
 import { updateProject, deleteProject } from "@/lib/projects"
-import { FileText, CheckCircle2, LayoutTemplate, CalendarClock } from "lucide-react"
+import { AlertTriangle, FileText, CheckCircle2, LayoutTemplate, CalendarClock, X } from "lucide-react"
 import { PROJECT_ICONS, getProjectIcon } from "@/lib/icons"
 
 export function Dashboard() {
@@ -16,6 +16,8 @@ export function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [editingProject, setEditingProject] = useState<{ id: string; name: string; description: string; icon: string } | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
@@ -41,16 +43,23 @@ export function Dashboard() {
     return Math.round((stats.completedTasks / stats.totalTasks) * 100)
   }, [stats])
 
-  const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
+  const handleDeleteProject = (projectId: string, projectName: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!window.confirm("Are you sure you want to delete this project? All tasks inside it will be lost.")) return
-    
+    setPendingDelete({ id: projectId, name: projectName })
+  }
+
+  const confirmDeleteProject = async () => {
+    if (!pendingDelete) return
+    setIsDeleting(true)
     try {
-      await deleteProject(projectId)
+      await deleteProject(pendingDelete.id)
       const newData = await getDashboardData()
       setStats(newData)
+      setPendingDelete(null)
     } catch (err: any) {
       setError(err.message || "Failed to delete project")
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -142,7 +151,7 @@ export function Dashboard() {
               dueDate={project.dueDate}
               priority={project.priority}
               onClick={() => navigate(`/projects/${project.id}/tasks`)}
-              onDelete={(e) => handleDeleteProject(project.id, e)}
+              onDelete={(e) => handleDeleteProject(project.id, project.name, e)}
               onEdit={(e) => {
                 e.stopPropagation()
                 setEditingProject({ id: project.id, name: project.name, description: project.description || "", icon: project.icon || "layout" })
@@ -207,6 +216,55 @@ export function Dashboard() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {pendingDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm animate-in fade-in"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !isDeleting) setPendingDelete(null)
+          }}
+        >
+          <div
+            className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-project-title"
+            aria-describedby="delete-project-description"
+          >
+            <button
+              type="button"
+              className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              onClick={() => setPendingDelete(null)}
+              disabled={isDeleting}
+              aria-label="Close delete project dialog"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div className="pr-6">
+                <h2 id="delete-project-title" className="text-xl font-bold">Delete project?</h2>
+                <p id="delete-project-description" className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  You’re about to delete <span className="font-semibold text-foreground">{pendingDelete.name}</span>. All tasks in this project will be permanently removed.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setPendingDelete(null)} disabled={isDeleting}>
+                Cancel
+              </Button>
+              <Button type="button" variant="destructive" className="flex-1" onClick={confirmDeleteProject} disabled={isDeleting}>
+                {isDeleting ? "Deleting…" : "Delete project"}
+              </Button>
+            </div>
           </div>
         </div>
       )}
