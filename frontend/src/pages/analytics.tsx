@@ -187,23 +187,23 @@ function TaskStatusChart({
   status: AnalyticsData["taskStatus"]
   total: number
 }) {
-  const segments = [
+  const visibleSegments = [
     { key: "completed", label: "Completed", value: status.completed, color: "#10b981" },
     { key: "inProgress", label: "In Progress", value: status.inProgress, color: "#f59e0b" },
     { key: "todo", label: "Todo", value: status.todo, color: "#1059f3" },
     { key: "overdue", label: "Overdue", value: status.overdue, color: "#ef4444" },
-  ].filter((s) => s.value > 0)
+  ].filter((segment) => Number.isFinite(segment.value) && segment.value > 0)
 
   const radius = 54
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
   return (
-    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex min-w-0 flex-col items-center gap-6 2xl:flex-row 2xl:items-center 2xl:justify-between">
       <div className="relative shrink-0">
         <svg width="160" height="160" viewBox="0 0 160 160">
           <circle cx="80" cy="80" r={radius} fill="none" stroke="currentColor" strokeOpacity="0.08" strokeWidth="16" />
-          {segments.map((segment) => {
+          {visibleSegments.map((segment) => {
             const dash = (segment.value / Math.max(total, 1)) * circumference
             const circle = (
               <circle
@@ -230,14 +230,14 @@ function TaskStatusChart({
         </div>
       </div>
 
-      <div className="w-full space-y-3 sm:max-w-[200px]">
-        {segments.map((segment) => (
-          <div key={segment.key} className="flex items-center justify-between gap-3 text-sm">
-            <div className="flex items-center gap-2">
+      <div className="w-full min-w-0 space-y-3 2xl:max-w-[200px]">
+        {visibleSegments.map((segment) => (
+          <div key={segment.key} className="flex min-w-0 items-center justify-between gap-2 text-sm">
+            <div className="flex min-w-0 items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: segment.color }} />
-              <span className="text-muted-foreground">{segment.label}</span>
+              <span className="break-words text-muted-foreground">{segment.label}</span>
             </div>
-            <span className="font-semibold">
+            <span className="shrink-0 whitespace-nowrap font-semibold">
               {segment.value}{" "}
               <span className="text-xs font-normal text-muted-foreground">
                 ({total === 0 ? 0 : ((segment.value / total) * 100).toFixed(1)}%)
