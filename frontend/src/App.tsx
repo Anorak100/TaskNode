@@ -7,6 +7,7 @@ import { NewProjectPage } from '@/pages/projects/new-project'
 import { ProjectTasksPage } from '@/pages/projects/project-tasks'
 import { CalendarPage } from '@/pages/calendar'
 import { AnalyticsPage } from '@/pages/analytics'
+import { LandingPage } from '@/pages/landing'
 import { isAuthenticated } from '@/lib/auth'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
@@ -25,7 +26,7 @@ function App() {
           />
           <Route
             path="/"
-            element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <Navigate to="/login" replace />}
+            element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <LandingPage />}
           />
           <Route
             path="/projects/new"
