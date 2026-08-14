@@ -97,8 +97,8 @@ function CompletionTrendChart({ data, totalCompleted }: { data: CompletionTrendP
   const xLabels = data.filter((_, i) => i === 0 || i === data.length - 1 || i % 5 === 0)
 
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="relative min-w-[480px]">
+    <div className="w-full overflow-x-auto overflow-y-hidden">
+      <div className="relative h-[220px] min-w-[480px]">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-[220px] w-full">
         <defs>
           <linearGradient id="completionGradient" x1="0" y1="0" x2="0" y2="1">
@@ -154,8 +154,12 @@ function CompletionTrendChart({ data, totalCompleted }: { data: CompletionTrendP
 
         {hoveredPoint ? (
           <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg"
-            style={{ left: `${(hoveredPoint.x / width) * 100}%`, top: `${(hoveredPoint.y / height) * 100}%` }}
+            className="pointer-events-none absolute z-10 max-w-[150px] -translate-x-1/2 rounded-lg bg-slate-950 px-3 py-2 text-xs text-white shadow-lg"
+            style={{
+              left: `${(hoveredPoint.x / width) * 100}%`,
+              top: `${((hoveredPoint.y < 58 ? hoveredPoint.y + 14 : hoveredPoint.y - 8) / height) * 100}%`,
+              transform: `translate(-50%, ${hoveredPoint.y < 58 ? "0" : "-100%"})`,
+            }}
           >
             <p className="font-semibold">{hoveredPoint.label}</p>
             <p className="mt-0.5 text-slate-300">
