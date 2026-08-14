@@ -8,6 +8,7 @@ export type ProjectRecord = {
   id: string
   name: string
   description: string | null
+  icon: string
   userId: string
   createdAt: string
 }

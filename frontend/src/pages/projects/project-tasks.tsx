@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, Filter, Plus, Search, SlidersHorizontal } from "lucide-react"
+import { ArrowLeft, Plus, Search, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { getProjectIcon } from "@/lib/icons"
 import {
   createTask,
   deleteTask,
@@ -38,7 +39,8 @@ export function ProjectTasksPage() {
   const [selectedTask, setSelectedTask] = useState<TaskRecord | null>(null)
   const [activeTab, setActiveTab] = useState<(typeof statusTabs)[number]>("All")
   const [search, setSearch] = useState("")
-  const [sortBy, setSortBy] = useState<"dueDate" | "title">("dueDate")
+  const [sortBy, setSortBy] = useState<"dueDate" | "title" | "createdAt">("dueDate")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const [error, setError] = useState<string | null>(null)
   const [showNewTask, setShowNewTask] = useState(false)
   const [form, setForm] = useState({ title: "", description: "", status: "TODO" as TaskStatus, dueDate: "" })
@@ -70,6 +72,8 @@ export function ProjectTasksPage() {
   const completedCount = useMemo(() => tasks.filter((task) => task.status === "DONE").length, [tasks])
   const totalCount = tasks.length
   const completedPercent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100)
+  const projectIcon = getProjectIcon(project?.icon ?? "layout")
+  const ProjectIcon = projectIcon.icon
 
   const filteredTasks = useMemo(() => {
     return tasks
@@ -77,16 +81,37 @@ export function ProjectTasksPage() {
         if (activeTab === "To Do" && task.status !== "TODO") return false
         if (activeTab === "In Progress" && task.status !== "IN_PROGRESS") return false
         if (activeTab === "Completed" && task.status !== "DONE") return false
-        return task.title.toLowerCase().includes(search.toLowerCase()) || (task.description ?? "").toLowerCase().includes(search.toLowerCase())
+        const query = search.trim().toLowerCase()
+        if (!query) return true
+        const statusLabel = statusMeta[task.status].label.replace("_", " ").toLowerCase()
+        return task.title.toLowerCase().includes(query) || (task.description ?? "").toLowerCase().includes(query) || statusLabel.includes(query)
       })
       .sort((a, b) => {
-        if (sortBy === "title") return a.title.localeCompare(b.title)
-        if (!a.dueDate) return 1
-        if (!b.dueDate) return -1
-        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        
+        let comparison = 0
+        if (sortBy === "title") comparison = a.title.localeCompare(b.title)
+        else if (sortBy === "createdAt") comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        else if (!a.dueDate && !b.dueDate) comparison = 0
+        else if (!a.dueDate) comparison = 1
+        else if (!b.dueDate) comparison = -1
+        else comparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        return sortDirection === "asc" ? comparison : -comparison
       })
-  }, [tasks, activeTab, search, sortBy])
+  }, [tasks, activeTab, search, sortBy, sortDirection])
+
+  const sortLabel = sortBy === "dueDate" ? "Due date" : sortBy === "createdAt" ? "Recently added" : "Title"
+
+  const cycleSort = () => {
+    if (sortBy === "dueDate") {
+      setSortBy("title")
+      setSortDirection("asc")
+    } else if (sortBy === "title") {
+      setSortBy("createdAt")
+      setSortDirection("desc")
+    } else {
+      setSortBy("dueDate")
+      setSortDirection("asc")
+    }
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -169,8 +194,8 @@ export function ProjectTasksPage() {
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500 text-white">
-                    <Plus className="h-5 w-5" />
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${projectIcon.bg} text-white`}>
+                    <ProjectIcon className="h-5 w-5" />
                   </div>
                   <div>
                     <h1 className="text-2xl font-semibold">{project?.name ?? "Loading project..."}</h1>
@@ -312,11 +337,8 @@ export function ProjectTasksPage() {
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <Filter className="h-4 w-4" /> Filter
-                      </Button>
-                      <Button variant="outline" size="sm" className="gap-2" onClick={() => setSortBy(sortBy === "dueDate" ? "title" : "dueDate")}> 
-                        <SlidersHorizontal className="h-4 w-4" /> Sort: {sortBy === "dueDate" ? "Due date" : "Title"}
+                      <Button variant="outline" size="sm" className="gap-2" onClick={cycleSort} title="Change task sort order">
+                        <SlidersHorizontal className="h-4 w-4" /> Sort: {sortLabel} {sortBy !== "createdAt" ? (sortDirection === "asc" ? "↑" : "↓") : "↓"}
                       </Button>
                     </div>
                   </div>
