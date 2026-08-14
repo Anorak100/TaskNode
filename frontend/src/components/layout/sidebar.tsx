@@ -109,7 +109,7 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
       <div className="mt-auto flex flex-col gap-4 border-t p-4">
         <div className="flex items-center justify-between px-2">
           <span className="text-sm font-medium text-muted-foreground">
-            {resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            {resolvedTheme === "dark" ? "Light mode" : "Dark mode"}
           </span>
           <ThemeToggle />
         </div>
