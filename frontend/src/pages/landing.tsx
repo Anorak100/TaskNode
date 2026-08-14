@@ -18,6 +18,7 @@ import {
   Check
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -94,6 +95,7 @@ export function LandingPage() {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Link 
               to="/login" 
               className="text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors"
@@ -109,6 +111,7 @@ export function LandingPage() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 md:hidden">
+            <ThemeToggle />
             <Link to="/login" className="text-sm font-semibold text-slate-600 dark:text-slate-300">
               Log in
             </Link>
