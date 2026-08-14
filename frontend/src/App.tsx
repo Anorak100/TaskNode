@@ -8,6 +8,7 @@ import { ProjectTasksPage } from '@/pages/projects/project-tasks'
 import { CalendarPage } from '@/pages/calendar'
 import { AnalyticsPage } from '@/pages/analytics'
 import { LandingPage } from '@/pages/landing'
+import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
 import { isAuthenticated } from '@/lib/auth'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
@@ -24,6 +25,9 @@ function App() {
             path="/signup"
             element={isAuthenticated() ? <Navigate to="/" replace /> : <SignupPage />}
           />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route
             path="/"
             element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <LandingPage />}

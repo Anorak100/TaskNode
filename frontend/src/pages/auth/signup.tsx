@@ -11,6 +11,7 @@ export function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -102,9 +103,26 @@ export function SignupPage() {
                 </div>
               </div>
 
+              <div className="flex items-start gap-2.5 text-sm leading-5 text-muted-foreground">
+                <input
+                  id="terms-agreement"
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-input accent-primary"
+                  checked={hasAcceptedTerms}
+                  onChange={(event) => setHasAcceptedTerms(event.target.checked)}
+                  required
+                />
+                <span>
+                  <label htmlFor="terms-agreement" className="cursor-pointer">I agree to the </label>
+                  <Link to="/terms" className="font-semibold text-primary hover:underline">Terms of Service</Link>
+                  <span> and </span>
+                  <Link to="/privacy" className="font-semibold text-primary hover:underline">Privacy Policy</Link>.
+                </span>
+              </div>
+
               {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-              <Button className="w-full gap-2 rounded-xl" size="lg" type="submit" disabled={isSubmitting}>
+              <Button className="w-full gap-2 rounded-xl" size="lg" type="submit" disabled={isSubmitting || !hasAcceptedTerms}>
                 {isSubmitting ? "Creating account..." : "Create account"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
