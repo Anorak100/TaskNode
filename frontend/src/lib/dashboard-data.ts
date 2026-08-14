@@ -19,6 +19,7 @@ export type TaskRecord = {
   dueDate: string | null
   projectId: string
   createdAt: string
+  completedAt: string | null
 }
 
 export type DashboardProjectSummary = {

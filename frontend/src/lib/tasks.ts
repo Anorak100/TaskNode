@@ -20,6 +20,7 @@ export type TaskRecord = {
   dueDate: string | null
   projectId: string
   createdAt: string
+  completedAt: string | null
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
