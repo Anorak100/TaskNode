@@ -81,6 +81,7 @@ async function createTask(req, res, next) {
       data: {
         ...data,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+        completedAt: data.status === 'DONE' ? new Date() : undefined,
         projectId: req.params.projectId,
       },
     });
@@ -109,6 +110,14 @@ async function updateTask(req, res, next) {
       data: {
         ...data,
         dueDate: data.dueDate === null ? null : data.dueDate ? new Date(data.dueDate) : undefined,
+        ...(data.status !== undefined
+          ? {
+              completedAt:
+                data.status === 'DONE'
+                  ? (task.status === 'DONE' && task.completedAt) || new Date()
+                  : null,
+            }
+          : {}),
       },
     });
 
