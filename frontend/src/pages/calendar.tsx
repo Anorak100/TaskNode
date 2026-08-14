@@ -104,6 +104,8 @@ export function CalendarPage() {
 
       {error && <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">{error}</p>}
 
+      {isLoading && <p className="text-sm text-muted-foreground">Loading calendar…</p>}
+
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
         <div className="grid grid-cols-7 gap-px rounded-t-xl bg-slate-200 dark:bg-slate-800">
           {DAYS_OF_WEEK.map(day => (
