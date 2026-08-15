@@ -10,12 +10,33 @@ import { AnalyticsPage } from '@/pages/analytics'
 import { LandingPage } from '@/pages/landing'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
 import { isAuthenticated } from '@/lib/auth'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+
+function PageTitle() {
+  const { pathname } = useLocation()
+  const titles: Record<string, string> = {
+    '/login': 'Sign in',
+    '/signup': 'Create account',
+    '/privacy': 'Privacy Policy',
+    '/terms': 'Terms of Service',
+    '/projects/new': 'New Project',
+    '/calendar': 'Calendar',
+    '/analytics': 'Analytics',
+  }
+  const pageTitle = titles[pathname] ?? (pathname.startsWith('/projects/') ? 'Project Tasks' : pathname === '/' && isAuthenticated() ? 'Dashboard' : '')
+
+  useEffect(() => {
+    document.title = pageTitle ? `${pageTitle} | TaskNode` : 'TaskNode | Organize your work'
+  }, [pageTitle])
+
+  return null
+}
 
 function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="task-manager-theme">
       <BrowserRouter>
+        <PageTitle />
         <Routes>
           <Route
             path="/login"
@@ -55,3 +76,4 @@ function App() {
 }
 
 export default App
+import { useEffect } from 'react'

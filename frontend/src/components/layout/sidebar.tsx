@@ -56,8 +56,8 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
           <div className="flex items-center gap-3">
             <img src="/tasknode_3.png" alt="TaskNode Logo" className="h-8 w-auto" />
             <div className="flex items-center text-[0.95rem] font-semibold tracking-tight">
-              <span className="text-black dark:text-white">task</span>
-              <span className="text-blue-600">node</span>
+              <span className="text-black dark:text-white">Task</span>
+              <span className="text-blue-600">Node</span>
             </div>
           </div>
         </div>

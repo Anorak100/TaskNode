@@ -12,9 +12,9 @@ function LegalPage({ title, updated, children }: LegalPageProps) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2" aria-label="tasknode home">
+          <Link to="/" className="flex items-center gap-2" aria-label="TaskNode home">
             <img src="/tasknode_3.png" alt="" className="h-7 w-auto" />
-            <span className="text-lg font-semibold tracking-tight">task<span className="text-primary">node</span></span>
+            <span className="text-lg font-semibold tracking-tight">Task<span className="text-primary">Node</span></span>
           </Link>
           <Link to="/signup" className="text-sm font-semibold text-primary hover:underline">Create account</Link>
         </div>

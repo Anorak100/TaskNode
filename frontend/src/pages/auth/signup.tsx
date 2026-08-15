@@ -37,8 +37,8 @@ export function SignupPage() {
         <div className="mb-8 flex items-center justify-center gap-3">
           <img src="/tasknode_3.png" alt="TaskNode logo" className="h-10 w-auto" />
           <div className="flex items-center text-lg font-semibold tracking-tight">
-            <span className="text-black dark:text-white">task</span>
-            <span className="text-blue-600">node</span>
+            <span className="text-black dark:text-white">Task</span>
+            <span className="text-blue-600">Node</span>
           </div>
         </div>
 

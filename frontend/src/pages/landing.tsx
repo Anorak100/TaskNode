@@ -65,8 +65,8 @@ export function LandingPage() {
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img src="/tasknode_3.png" alt="tasknode Logo" className="h-8 w-auto" />
             <span className="text-xl font-bold tracking-tight">
-              <span className="text-slate-900 dark:text-white">task</span>
-              <span className="text-blue-600">node</span>
+              <span className="text-slate-900 dark:text-white">Task</span>
+              <span className="text-blue-600">Node</span>
             </span>
           </div>
 
@@ -219,7 +219,9 @@ export function LandingPage() {
                     {/* Header Logo */}
                     <div className="flex items-center gap-2">
                       <img src="/tasknode_3.png" alt="tasknode logo" className="h-6 w-auto" />
-                      <span className="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">tasknode</span>
+                      <span className="text-sm font-semibold tracking-tight">
+                        <span className="text-slate-900 dark:text-white">Task</span><span className="text-blue-600">Node</span>
+                      </span>
                     </div>
 
                     {/* Navigation Items */}
@@ -768,7 +770,7 @@ export function LandingPage() {
           <div className="space-y-4 max-w-md relative z-10">
             <div className="flex items-center gap-2">
               <img src="/tasknode_3.png" alt="tasknode Logo" className="h-8 w-auto" />
-              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">tasknode</span>
+              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">TaskNode</span>
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
               Ready to get organized?
