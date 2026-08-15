@@ -8,44 +8,43 @@ import {
   ListTodo, 
   Settings, 
   ArrowRight, 
-  Plus, 
   Menu, 
   X, 
   Layers, 
   Clock, 
   BarChart3, 
   Bell,
-  Check
+  Check,
+  FileText,
+  LayoutTemplate,
+  CalendarClock,
+  ArrowLeft,
+  Code2,
+  MessageCircle,
+  Hand,
+  Heart
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  )
+}
+
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Static tasks for hero dashboard illustration (non-clickable)
-  const heroTasks = [
-    { id: 1, text: "Design homepage", date: "Tomorrow", completed: false, dateColor: "text-red-500 bg-red-500/10" },
-    { id: 2, text: "Create logo and branding", date: "Aug 1, 2024", completed: false, dateColor: "text-amber-600 bg-amber-500/10" },
-    { id: 3, text: "Connect API", date: "Aug 8, 2024", completed: false, dateColor: "text-slate-500 bg-slate-500/10" },
-    { id: 4, text: "Implement authentication", date: "Aug 12, 2024", completed: true, dateColor: "text-slate-500 bg-slate-500/10" },
-    { id: 5, text: "Deploy to production", date: "Aug 20, 2024", completed: false, dateColor: "text-slate-500 bg-slate-500/10" },
-  ]
-
-  // Static projects and tasks for feature illustration
-  const featureProjects = [
-    { name: "Website Redesign", count: "19 / 25 tasks", active: true },
-    { name: "Mobile App", count: "12 / 18 tasks", active: false },
-    { name: "Marketing Campaign", count: "8 / 15 tasks", active: false },
-    { name: "Study Plan", count: "6 / 12 tasks", active: false },
-  ]
-
+  // Static tasks for feature illustrations
   const featureTasks = [
-    { text: "Design homepage", status: "TODO" },
-    { text: "Create logo and branding", status: "TODO" },
-    { text: "Connect API", status: "IN PROGRESS" },
-    { text: "Implement authentication", status: "DONE" },
-    { text: "Deploy to production", status: "TODO" },
+    { text: "Design homepage", desc: "Create modern UI wireframes and visual mockups.", status: "TODO", date: "Tomorrow", dateColor: "text-red-500 bg-red-500/10" },
+    { text: "Create logo and branding", desc: "Export high-res SVGs for dark and light logo variants.", status: "TODO", date: "Aug 1, 2024", dateColor: "text-amber-600 bg-amber-500/10" },
+    { text: "Connect API", desc: "Hook up REST controllers to client query endpoints.", status: "IN_PROGRESS", date: "Aug 8, 2024", dateColor: "text-blue-500 bg-blue-500/10" },
+    { text: "Implement authentication", desc: "Integrate JWT sessions and protected routes.", status: "DONE", date: "Aug 12, 2024", dateColor: "text-slate-500 bg-slate-100 dark:bg-slate-800" },
+    { text: "Deploy to production", desc: "Build bundle and deploy to staging host.", status: "TODO", date: "Aug 20, 2024", dateColor: "text-slate-500 bg-slate-100 dark:bg-slate-800" },
   ]
 
   const scrollToSection = (id: string) => {
@@ -207,15 +206,15 @@ export function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Premium Static Dashboard Illustration */}
+          {/* Right Column: Premium Dashboard Illustration (Static, Matches dashboard.tsx) */}
           <div className="lg:col-span-7 pointer-events-none select-none">
-            <div className="relative rounded-2xl border border-slate-200/80 bg-white p-2 shadow-2xl dark:border-slate-800/80 dark:bg-slate-900 transition-all duration-300">
+            <div className="relative rounded-3xl border border-slate-200/80 bg-white p-2 shadow-2xl dark:border-slate-800/80 dark:bg-slate-900 transition-all duration-300">
               
               {/* Inner container mimicking app layout */}
-              <div className="flex flex-col md:flex-row rounded-xl overflow-hidden bg-slate-50 border border-slate-200/50 dark:bg-slate-950 dark:border-slate-800/50 min-h-[460px]">
+              <div className="flex flex-col md:flex-row rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/50 dark:bg-slate-950 dark:border-slate-800/50 min-h-[500px]">
                 
-                {/* Dashboard Sidebar Illustration (Static) */}
-                <div className="w-full md:w-48 bg-white dark:bg-slate-900 p-4 border-b md:border-b-0 md:border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between">
+                {/* Dashboard Sidebar Illustration */}
+                <div className="w-full md:w-48 md:shrink-0 bg-white dark:bg-slate-900 p-4 border-b md:border-b-0 md:border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col justify-between">
                   <div className="space-y-5">
                     {/* Header Logo */}
                     <div className="flex items-center gap-2">
@@ -238,8 +237,8 @@ export function LandingPage() {
                         <span>Calendar</span>
                       </div>
                       <div className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
-                        <ListTodo className="h-3.5 w-3.5" />
-                        <span>My Tasks</span>
+                        <BarChart3 className="h-3.5 w-3.5" />
+                        <span>Analytics</span>
                       </div>
                       <div className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
                         <Settings className="h-3.5 w-3.5" />
@@ -250,7 +249,7 @@ export function LandingPage() {
 
                   {/* Dark Mode Switch & Profile */}
                   <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    {/* Switch Mode Button (Visual only) */}
+                    {/* Switch Mode Button */}
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-semibold text-slate-400">Dark mode</span>
                       <div className="relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent bg-slate-200 dark:bg-slate-800">
@@ -261,7 +260,7 @@ export function LandingPage() {
                     {/* Profile */}
                     <div className="flex items-center gap-2">
                       <img
-                        className="h-7 w-7 rounded-full object-cover"
+                        className="h-7 w-7 shrink-0 rounded-full object-cover"
                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80"
                         alt="user profile avatar"
                       />
@@ -273,96 +272,130 @@ export function LandingPage() {
                   </div>
                 </div>
 
-                {/* Dashboard Content Illustration (Static) */}
-                <div className="flex-1 p-5 md:p-6 overflow-y-auto">
+                {/* Dashboard Content Illustration (Matches dashboard.tsx) */}
+                <div className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-5 md:p-6">
                   
                   {/* Top Bar / Greeting */}
-                  <div className="mb-5">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Welcome back, user 👋</h3>
-                    <p className="text-[10px] text-slate-400">Here's what's happening with your work today.</p>
+                  <div className="mb-6">
+                    <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-900 dark:text-white">
+                      Good afternoon, user <Hand className="h-4 w-4 text-amber-500" aria-label="Waving hand" />
+                    </h3>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">Here's what's happening with your projects today.</p>
                   </div>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3 mb-5 sm:grid-cols-4">
-                    <div className="bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
-                      <span className="text-[9px] font-semibold text-slate-400 block">Total Projects</span>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">8</span>
-                      <span className="text-[9px] font-medium text-emerald-500 flex items-center">↑ 20% <span className="text-[8px] text-slate-400 ml-0.5">last month</span></span>
+                  {/* Stats Grid (StatCards layout) */}
+                  <div className="mb-6 grid grid-cols-2 gap-3">
+                    <div className="flex min-w-0 items-start gap-3 rounded-[1.25rem] border border-slate-200/50 bg-white p-3 dark:border-slate-800/50 dark:bg-slate-900">
+                      <div className="shrink-0 rounded-xl bg-blue-100 p-2 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex flex-col">
+                        <span className="truncate text-[9px] font-semibold text-slate-400">Total Projects</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">8</span>
+                        <span className="text-[8px] text-emerald-500 font-semibold block">Live</span>
+                      </div>
                     </div>
-                    <div className="bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
-                      <span className="text-[9px] font-semibold text-slate-400 block">Total Tasks</span>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">25</span>
-                      <span className="text-[9px] font-medium text-emerald-500 flex items-center">↑ 15% <span className="text-[8px] text-slate-400 ml-0.5">last month</span></span>
+                    
+                    <div className="flex min-w-0 items-start gap-3 rounded-[1.25rem] border border-slate-200/50 bg-white p-3 dark:border-slate-800/50 dark:bg-slate-900">
+                      <div className="shrink-0 rounded-xl bg-emerald-100 p-2 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
+                        <LayoutTemplate className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex flex-col">
+                        <span className="truncate text-[9px] font-semibold text-slate-400">Total Tasks</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">25</span>
+                        <span className="text-[8px] text-emerald-500 font-semibold block">Tracked</span>
+                      </div>
                     </div>
-                    <div className="bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
-                      <span className="text-[9px] font-semibold text-slate-400 block">Completed</span>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">11</span>
-                      <span className="text-[9px] font-medium text-emerald-500 flex items-center">↑ 10% <span className="text-[8px] text-slate-400 ml-0.5">last month</span></span>
+
+                    <div className="flex min-w-0 items-start gap-3 rounded-[1.25rem] border border-slate-200/50 bg-white p-3 dark:border-slate-800/50 dark:bg-slate-900">
+                      <div className="shrink-0 rounded-xl bg-amber-100 p-2 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                        <CalendarClock className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex flex-col">
+                        <span className="truncate text-[9px] font-semibold text-slate-400">Due Today</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">1</span>
+                        <span className="text-[8px] text-emerald-500 font-semibold block">Watchlist</span>
+                      </div>
                     </div>
-                    <div className="bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
-                      <span className="text-[9px] font-semibold text-slate-400 block">In Progress</span>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">6</span>
-                      <span className="text-[9px] text-slate-400 block">-- from last month</span>
+
+                    <div className="flex min-w-0 items-start gap-3 rounded-[1.25rem] border border-slate-200/50 bg-white p-3 dark:border-slate-800/50 dark:bg-slate-900">
+                      <div className="shrink-0 rounded-xl bg-purple-100 p-2 text-purple-600 dark:bg-purple-900/40 dark:text-purple-400">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex flex-col">
+                        <span className="truncate text-[9px] font-semibold text-slate-400">Completed</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100 block">44%</span>
+                        <span className="text-[8px] text-emerald-500 font-semibold block">11 tasks</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Dual Grid: Recent Projects & Upcoming Tasks */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {/* Left Column: Recent Projects */}
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50">
-                      <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-[10px] font-bold text-slate-800 dark:text-slate-200">Recent Projects</span>
-                        <span className="text-[9px] font-semibold text-blue-600 dark:text-blue-400">View all</span>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          { name: "Website Redesign", fraction: "19 / 25 tasks", percent: "w-[76%] bg-blue-600", active: true },
-                          { name: "Mobile App", fraction: "12 / 18 tasks", percent: "w-[66%] bg-emerald-500", active: false },
-                          { name: "Marketing Campaign", fraction: "8 / 15 tasks", percent: "w-[53%] bg-purple-500", active: false },
-                          { name: "Study Plan", fraction: "6 / 12 tasks", percent: "w-[50%] bg-amber-500", active: false },
-                          { name: "Personal Finance App", fraction: "4 / 10 tasks", percent: "w-[40%] bg-blue-400", active: false }
-                        ].map((proj) => (
-                          <div 
-                            key={proj.name} 
-                            className={`space-y-1 p-1.5 rounded-md ${proj.active ? 'bg-slate-50 dark:bg-slate-800/60' : ''}`}
-                          >
-                            <div className="flex justify-between items-center">
-                              <span className="text-[9px] font-semibold text-slate-700 dark:text-slate-300">{proj.name}</span>
-                              <span className="text-[8px] text-slate-400">{proj.fraction}</span>
-                            </div>
-                            <div className="w-full bg-slate-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full ${proj.percent}`} />
-                            </div>
+                  {/* Projects list section header */}
+                  <div className="flex items-center justify-between mb-4 pb-1">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Projects</span>
+                    <div className="flex gap-2 text-[9px] font-bold text-slate-400">
+                      <span>All Projects ˅</span>
+                      <span>Sort: Recent</span>
+                    </div>
+                  </div>
+
+                  {/* Mock grid of ProjectCards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Website Redesign Card */}
+                    <div className="bg-white dark:bg-slate-900 p-4 rounded-[1.25rem] border border-slate-200/60 dark:border-slate-800/80 flex flex-col justify-between shadow-sm">
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white">
+                            <Layers className="w-4 h-4" />
                           </div>
-                        ))}
+                          <h4 className="font-semibold text-xs text-slate-850 dark:text-slate-100">Website Redesign</h4>
+                        </div>
+                        <p className="text-[10px] text-slate-450 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                          Redesign and rebuild the company website with new branding layouts.
+                        </p>
+                      </div>
+                      <div className="space-y-3.5 mt-auto">
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-[9px] font-bold">
+                            <span>76% Complete</span>
+                          </div>
+                          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full bg-blue-600 w-[76%]" />
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2 text-[9px] text-slate-400 font-semibold">
+                          <span>25 Tasks</span>
+                          <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-bold uppercase tracking-wider text-[8px]">HIGH</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Right Column: Upcoming Tasks */}
-                    <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50">
-                      <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-[10px] font-bold text-slate-800 dark:text-slate-200">Upcoming Tasks</span>
-                        <span className="text-[9px] font-semibold text-blue-600 dark:text-blue-400">View all</span>
-                      </div>
-                      <div className="space-y-2.5">
-                        {heroTasks.map((task) => (
-                          <div 
-                            key={task.id} 
-                            className="flex items-center justify-between gap-2"
-                          >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <div className={`h-4 w-4 rounded-md border flex items-center justify-center ${task.completed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 dark:border-slate-700'}`}>
-                                {task.completed && <Check className="h-2.5 w-2.5 text-white" />}
-                              </div>
-                              <span className={`text-[9px] font-medium truncate ${task.completed ? 'line-through text-slate-400' : 'text-slate-700 dark:text-slate-300'}`}>
-                                {task.text}
-                              </span>
-                            </div>
-                            <span className={`text-[8px] px-1.5 py-0.5 rounded-full shrink-0 font-medium ${task.dateColor}`}>
-                              {task.date}
-                            </span>
+                    {/* Mobile App Card */}
+                    <div className="bg-white dark:bg-slate-900 p-4 rounded-[1.25rem] border border-slate-200/60 dark:border-slate-800/80 flex flex-col justify-between shadow-sm">
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white">
+                            <LayoutTemplate className="w-4 h-4" />
                           </div>
-                        ))}
+                          <h4 className="font-semibold text-xs text-slate-850 dark:text-slate-100">Mobile App</h4>
+                        </div>
+                        <p className="text-[10px] text-slate-450 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                          Create a native mobile app for iOS and Android matching dashboard components.
+                        </p>
+                      </div>
+                      <div className="space-y-3.5 mt-auto">
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-[9px] font-bold">
+                            <span>66% Complete</span>
+                          </div>
+                          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full bg-warning w-[66%]" />
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-2 text-[9px] text-slate-400 font-semibold">
+                          <span>18 Tasks</span>
+                          <span className="px-1.5 py-0.5 rounded bg-warning/20 text-warning font-bold uppercase tracking-wider text-[8px]">MEDIUM</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -380,7 +413,7 @@ export function LandingPage() {
       <section id="features" className="bg-slate-100/40 dark:bg-slate-900/20 py-20 sm:py-28 transition-colors duration-300">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-24 sm:space-y-36">
           
-          {/* Row 1: Project-First Organization */}
+          {/* Row 1: Project-First Organization (Matches project-tasks.tsx) */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
             {/* Left side text detail */}
             <div className="space-y-5 lg:col-span-5">
@@ -408,80 +441,145 @@ export function LandingPage() {
               </ul>
             </div>
 
-            {/* Right side static card illustration */}
+            {/* Right side static project-tasks page mockup (Matches project-tasks.tsx) */}
             <div className="lg:col-span-7 pointer-events-none select-none">
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-stretch">
-                {/* Project List Column */}
-                <div className="sm:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 shadow-xl flex flex-col gap-3 justify-center min-h-[300px]">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Projects</div>
-                  <div className="space-y-2">
-                    {featureProjects.map((p) => (
-                      <div
-                        key={p.name}
-                        className={`flex items-center gap-3 w-full rounded-xl p-2.5 text-xs font-semibold ${
-                          p.active
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/15"
-                            : "text-slate-600 dark:text-slate-400"
-                        }`}
-                      >
-                        <div className={`p-1.5 rounded-lg shrink-0 ${p.active ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
-                          <Folder className="h-3.5 w-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="truncate leading-none mb-1">{p.name}</div>
-                          <div className={`text-[9px] ${p.active ? "text-blue-100" : "text-slate-400"}`}>{p.count}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="bg-slate-100/50 dark:bg-slate-950/80 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl p-4 shadow-xl space-y-4">
+                
+                {/* Back to Dashboard bar */}
+                <div className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-bold">
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Dashboard</span>
                 </div>
 
-                {/* Selected Project Detail Mock */}
-                <div className="sm:col-span-7 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between min-h-[300px]">
-                  <div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="p-1.5 bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400 rounded-lg">
-                        <Folder className="h-4 w-4" />
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
+                  
+                  {/* Left Column: Project details and task list */}
+                  <div className="sm:col-span-7 space-y-3.5">
+                    {/* Project Header summary */}
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-blue-500 text-white flex items-center justify-center">
+                          <Layers className="w-4.5 h-4.5" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-xs">Website Redesign</h4>
+                          <p className="text-[9px] text-muted-foreground">Redesign and rebuild the company website.</p>
+                        </div>
                       </div>
-                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Website Redesign</h4>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-[9px] font-bold text-muted-foreground">
+                          <span>76% Complete</span>
+                          <span>25 Tasks</span>
+                        </div>
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-blue-600 w-[76%]" />
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      {featureTasks.map((task, idx) => (
-                        <div key={idx} className="flex items-center justify-between gap-3 border-b border-slate-50 dark:border-slate-800/30 pb-2">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center shrink-0 ${task.status === "DONE" ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-300 dark:border-slate-700"}`}>
-                              {task.status === "DONE" && <Check className="h-2.5 w-2.5" />}
-                            </div>
-                            <span className={`text-xs truncate font-medium ${task.status === "DONE" ? "line-through text-slate-400" : "text-slate-700 dark:text-slate-300"}`}>
-                              {task.text}
-                            </span>
+                    {/* Filter tabs */}
+                    <div className="flex gap-2">
+                      <div className="rounded-full px-3 py-1 text-[9px] font-bold bg-blue-600 text-white">All (25)</div>
+                      <div className="rounded-full px-3 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-900 text-slate-500">To Do (11)</div>
+                      <div className="rounded-full px-3 py-1 text-[9px] font-bold bg-slate-100 dark:bg-slate-900 text-slate-500">In Progress (6)</div>
+                    </div>
+
+                    {/* Task Table Mockup (Matches actual layout) */}
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl overflow-hidden text-[9px]">
+                      <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-850">
+                        <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 text-left font-bold">
+                          <tr>
+                            <th className="px-3.5 py-2.5">Task</th>
+                            <th className="px-3.5 py-2.5">Status</th>
+                            <th className="px-3.5 py-2.5">Due Date</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-850 bg-white dark:bg-slate-900">
+                          {featureTasks.map((t, idx) => (
+                            <tr key={idx} className={t.status === "IN_PROGRESS" ? "bg-slate-50 dark:bg-slate-800/50" : ""}>
+                              <td className="px-3.5 py-2.5 font-semibold">
+                                <div>{t.text}</div>
+                                <div className="text-[8px] text-muted-foreground font-normal line-clamp-1">{t.desc}</div>
+                              </td>
+                              <td className="px-3.5 py-2.5">
+                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
+                                  t.status === "TODO" ? "bg-slate-100 text-slate-600 dark:bg-slate-850 dark:text-slate-400" :
+                                  t.status === "IN_PROGRESS" ? "bg-warning/10 text-warning" : "bg-success/10 text-success"
+                                }`}>
+                                  {t.status}
+                                </span>
+                              </td>
+                              <td className="px-3.5 py-2.5 text-muted-foreground font-medium">{t.date}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Task detail cards pane (Matches project-tasks.tsx) */}
+                  <div className="sm:col-span-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 space-y-4">
+                    <div>
+                      <div className="text-[9px] font-bold text-muted-foreground mb-3">Task details</div>
+                      <div className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <h5 className="text-xs font-bold leading-tight">Connect API</h5>
+                            <span className="px-1.5 py-0.5 rounded bg-warning/10 text-warning text-[8px] font-bold tracking-wider uppercase">IN_PROGRESS</span>
                           </div>
-                          <span className={`text-[8px] px-2 py-0.5 rounded-full shrink-0 font-bold ${
-                            task.status === "TODO" ? "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400" :
-                            task.status === "IN PROGRESS" ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" :
-                            "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                          }`}>
-                            {task.status}
-                          </span>
+                          <p className="text-[9px] text-muted-foreground leading-relaxed">
+                            Integrate the backend REST API endpoints with the frontend services.
+                          </p>
                         </div>
-                      ))}
+
+                        {/* Metadata Box */}
+                        <div className="rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 p-2.5 text-[9px] space-y-1.5 font-medium">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Project</span>
+                            <span>Website Redesign</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Due Date</span>
+                            <span>Aug 8, 2024</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Status</span>
+                            <span>IN_PROGRESS</span>
+                          </div>
+                        </div>
+
+                        {/* Action buttons */}
+                        <div className="space-y-2 pt-1.5">
+                          <div className="w-full h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
+                            Mark as done
+                          </div>
+                          <div className="flex gap-2">
+                            <div className="flex-1 h-7 border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-center text-[9px] font-bold">
+                              Edit task
+                            </div>
+                            <div className="flex-1 h-7 border border-slate-200 dark:border-slate-800 text-red-500 rounded-lg flex items-center justify-center text-[9px] font-bold">
+                              Delete
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-500/80 mt-4">
-                    <Plus className="h-3.5 w-3.5" /> Add Task
-                  </div>
                 </div>
+
               </div>
             </div>
           </div>
 
-          {/* Row 2: Simple Task Management */}
+          {/* Row 2: Simple Task Management (Matches task list table layout) */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
-            {/* Left column static illustration */}
+            {/* Left column visual mock table */}
             <div className="lg:col-span-7 order-last lg:order-first pointer-events-none select-none">
               <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-5 sm:p-6 shadow-xl max-w-lg mx-auto space-y-4">
+                
+                {/* Header Filter tab selection */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex gap-4 text-xs font-semibold text-slate-400">
                     <span className="text-blue-600 dark:text-blue-400 pb-3 border-b-2 border-blue-600 dark:border-blue-400">All (25)</span>
@@ -491,29 +589,50 @@ export function LandingPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3.5">
-                  {[
-                    { text: "Design homepage", date: "Tomorrow", completed: false, dateColor: "text-red-500 bg-red-500/10" },
-                    { text: "Create logo and branding", date: "Aug 1, 2024", completed: false, dateColor: "text-amber-600 bg-amber-500/10" },
-                    { text: "Connect API", date: "Aug 8, 2024", completed: false, dateColor: "text-slate-500 bg-slate-100 dark:bg-slate-800" },
-                    { text: "Implement authentication", date: "Aug 12, 2024", completed: true, dateColor: "text-slate-500 bg-slate-100 dark:bg-slate-800" },
-                    { text: "Deploy to production", date: "Aug 20, 2024", completed: false, dateColor: "text-slate-500 bg-slate-100 dark:bg-slate-800" },
-                  ].map((task, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-3 border-b border-slate-50 dark:border-slate-800/30 pb-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className={`h-4.5 w-4.5 rounded-md border flex items-center justify-center shrink-0 ${task.completed ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-300 dark:border-slate-700"}`}>
-                          {task.completed && <Check className="h-2.5 w-2.5" />}
-                        </div>
-                        <span className={`text-xs font-semibold truncate ${task.completed ? "line-through text-slate-400" : "text-slate-700 dark:text-slate-300"}`}>
-                          {task.text}
-                        </span>
-                      </div>
-                      <span className={`text-[9px] px-2 py-0.5 rounded-md font-bold shrink-0 ${task.dateColor}`}>
-                        {task.date}
-                      </span>
-                    </div>
-                  ))}
+                {/* Search and Sort layout */}
+                <div className="flex items-center justify-between gap-3 text-[10px]">
+                  <div className="flex-1 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-muted-foreground flex items-center gap-2 bg-slate-50 dark:bg-slate-950">
+                    <Check className="h-3 w-3 text-slate-400" />
+                    <span>Search tasks...</span>
+                  </div>
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1.5 font-bold flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>Sort: Due date ↑</span>
+                  </div>
                 </div>
+
+                {/* Table list format */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
+                  <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-850 text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 font-bold text-[10px]">
+                      <tr>
+                        <th className="px-4 py-2.5">Task</th>
+                        <th className="px-4 py-2.5">Status</th>
+                        <th className="px-4 py-2.5">Due Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-850 bg-white dark:bg-slate-900 font-medium">
+                      {featureTasks.map((task, idx) => (
+                        <tr key={idx}>
+                          <td className="px-4 py-3">
+                            <div className="font-semibold text-slate-850 dark:text-slate-200">{task.text}</div>
+                            <div className="text-[9px] text-muted-foreground font-normal line-clamp-1">{task.desc}</div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
+                              task.status === "TODO" ? "bg-slate-100 text-slate-600 dark:bg-slate-850 dark:text-slate-400" :
+                              task.status === "IN_PROGRESS" ? "bg-warning/10 text-warning" : "bg-success/10 text-success"
+                            }`}>
+                              {task.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground text-[10px]">{task.date}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
               </div>
             </div>
 
@@ -680,8 +799,22 @@ export function LandingPage() {
         </div>
 
         {/* Small copyrights footer */}
-        <div className="mt-12 text-center text-xs text-slate-400 dark:text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-100 dark:border-slate-900 pt-6">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 text-center text-xs text-slate-400 dark:border-slate-900 dark:text-slate-500 lg:flex-row lg:text-left">
           <p>© {new Date().getFullYear()} tasknode. All rights reserved.</p>
+          <div className="flex items-center gap-3">
+            <a href="https://github.com/Anorak100" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-700 dark:hover:text-slate-200" aria-label="Anorak's GitHub profile">
+              <Code2 className="h-3.5 w-3.5" /> GitHub
+            </a>
+            <a href="https://wa.me/2348148920102" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400" aria-label="Message Anorak on WhatsApp">
+              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+            </a>
+            <a href="https://x.com/izzyCodes_" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-700 dark:hover:text-slate-200" aria-label="Follow izzyCodes on X">
+              <XIcon className="h-3.5 w-3.5" /> X
+            </a>
+          </div>
+          <p className="flex items-center gap-1">
+            designed and built with <Heart className="h-3.5 w-3.5 fill-red-500 text-red-500" aria-label="Love" /> by <a href="https://github.com/Anorak100" target="_blank" rel="noreferrer" className="font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300">Anorak💫</a>
+          </p>
           <div className="flex gap-4">
             <Link to="/privacy" className="hover:underline">Privacy Policy</Link>
             <Link to="/terms" className="hover:underline">Terms of Service</Link>

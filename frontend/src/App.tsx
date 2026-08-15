@@ -27,7 +27,6 @@ function App() {
           />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
-          <Route path="/landing" element={<LandingPage />} />
           <Route
             path="/"
             element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <LandingPage />}

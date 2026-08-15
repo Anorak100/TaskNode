@@ -55,7 +55,7 @@ export function SignupPage() {
                 <div className="relative">
                   <UserRound className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Israel Akoteyon"
+                    placeholder="John Doe"
                     className="pl-9"
                     type="text"
                     value={name}
@@ -70,7 +70,7 @@ export function SignupPage() {
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="you@example.com"
+                    placeholder="johndoe@gmail.com"
                     className="pl-9"
                     type="email"
                     value={email}

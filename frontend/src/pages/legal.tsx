@@ -12,7 +12,7 @@ function LegalPage({ title, updated, children }: LegalPageProps) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4 sm:px-6">
-          <Link to="/landing" className="flex items-center gap-2" aria-label="tasknode home">
+          <Link to="/" className="flex items-center gap-2" aria-label="tasknode home">
             <img src="/tasknode_3.png" alt="" className="h-7 w-auto" />
             <span className="text-lg font-semibold tracking-tight">task<span className="text-primary">node</span></span>
           </Link>
@@ -21,7 +21,7 @@ function LegalPage({ title, updated, children }: LegalPageProps) {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-        <Link to="/landing" className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <Link to="/" className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Back to home
         </Link>
         <article className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-10">
