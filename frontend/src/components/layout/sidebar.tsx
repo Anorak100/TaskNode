@@ -36,11 +36,8 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
   }
 
   const handleSignOut = () => {
-    const confirmed = window.confirm("Are you sure you want to sign out?")
-    if (!confirmed) return
-
     logout()
-    navigate("/login", { replace: true })
+    sessionStorage.setItem("tasknode-sign-out-notice", "true")
     window.location.replace("/login")
   }
 

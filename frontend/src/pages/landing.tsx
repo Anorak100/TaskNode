@@ -815,7 +815,7 @@ export function LandingPage() {
             </a>
           </div>
           <p className="flex items-center gap-1">
-            designed and built with <Heart className="h-3.5 w-3.5 fill-red-500 text-red-500" aria-label="Love" /> by <a href="https://github.com/Anorak100" target="_blank" rel="noreferrer" className="font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300">Anorak💫</a>
+            designed &amp; built with <Heart className="h-3.5 w-3.5 fill-red-500 text-red-500" aria-label="Love" /> by <a href="https://github.com/Anorak100" target="_blank" rel="noreferrer" className="font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300">Anorak💫</a>
           </p>
           <div className="flex gap-4">
             <Link to="/privacy" className="hover:underline">Privacy Policy</Link>

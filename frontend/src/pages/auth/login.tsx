@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,21 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSignOutNotice, setShowSignOutNotice] = useState(false)
+
+  useEffect(() => {
+    if (sessionStorage.getItem("tasknode-sign-out-notice") !== "true") return
+
+    sessionStorage.removeItem("tasknode-sign-out-notice")
+    setShowSignOutNotice(true)
+  }, [])
+
+  useEffect(() => {
+    if (!showSignOutNotice) return
+
+    const timeout = window.setTimeout(() => setShowSignOutNotice(false), 4000)
+    return () => window.clearTimeout(timeout)
+  }, [showSignOutNotice])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -30,6 +45,11 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+      {showSignOutNotice ? (
+        <div role="status" aria-live="polite" className="fixed right-4 top-4 z-50 rounded-xl border border-emerald-200 bg-white px-4 py-3 text-sm font-medium text-emerald-700 shadow-lg dark:border-emerald-900/60 dark:bg-slate-900 dark:text-emerald-400">
+          You&apos;ve been signed out.
+        </div>
+      ) : null}
       <div className="w-full max-w-md">
         <div className="mb-8 flex items-center justify-center gap-3">
           <img src="/tasknode_3.png" alt="TaskNode logo" className="h-10 w-auto" />
