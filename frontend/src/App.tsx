@@ -3,6 +3,8 @@ import { AppLayout } from '@/components/layout/app-layout'
 import { Dashboard } from '@/pages/dashboard'
 import { LoginPage } from '@/pages/auth/login'
 import { SignupPage } from '@/pages/auth/signup'
+import { ForgotPasswordPage } from '@/pages/auth/forgot-password'
+import { ResetPasswordPage } from '@/pages/auth/reset-password'
 import { NewProjectPage } from '@/pages/projects/new-project'
 import { ProjectTasksPage } from '@/pages/projects/project-tasks'
 import { CalendarPage } from '@/pages/calendar'
@@ -17,6 +19,8 @@ function PageTitle() {
   const titles: Record<string, string> = {
     '/login': 'Sign in',
     '/signup': 'Create account',
+    '/forgot-password': 'Reset password',
+    '/reset-password': 'Choose a new password',
     '/privacy': 'Privacy Policy',
     '/terms': 'Terms of Service',
     '/projects/new': 'New Project',
@@ -46,6 +50,8 @@ function App() {
             path="/signup"
             element={isAuthenticated() ? <Navigate to="/" replace /> : <SignupPage />}
           />
+          <Route path="/forgot-password" element={isAuthenticated() ? <Navigate to="/" replace /> : <ForgotPasswordPage />} />
+          <Route path="/reset-password" element={isAuthenticated() ? <Navigate to="/" replace /> : <ResetPasswordPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
           <Route

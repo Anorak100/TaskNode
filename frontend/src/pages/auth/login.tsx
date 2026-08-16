@@ -110,7 +110,7 @@ export function LoginPage() {
                   <input type="checkbox" className="h-4 w-4 rounded border-input" />
                   Remember me
                 </label>
-                <Link to="/signup" className="text-primary hover:underline">
+                <Link to="/forgot-password" className="text-primary hover:underline">
                   Forgot password?
                 </Link>
               </div>

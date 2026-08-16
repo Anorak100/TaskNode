@@ -68,3 +68,23 @@ export async function registerUser(name: string, email: string, password: string
 
   return parseResponse<{ id: number; email: string; name: string; createdAt: string }>(response)
 }
+
+export async function requestPasswordReset(email: string) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  })
+
+  return parseResponse<{ message: string }>(response)
+}
+
+export async function resetPassword(email: string, code: string, password: string) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code, password }),
+  })
+
+  return parseResponse<{ message: string }>(response)
+}

@@ -18,6 +18,18 @@ model User {
   name         String
   createdAt    DateTime  @default(now())
   projects     Project[]
+  passwordReset PasswordResetCode?
+}
+
+model PasswordResetCode {
+  id        String   @id @default(uuid())
+  codeHash  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
 }
 
 model Project {
