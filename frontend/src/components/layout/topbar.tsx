@@ -1,7 +1,8 @@
-import { Bell, Menu, Search, Plus } from "lucide-react"
+import { Menu, Search, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { NotificationsDropdown } from "@/components/layout/notifications-dropdown"
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const navigate = useNavigate()
@@ -33,9 +34,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
           />
         </div>
 
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Bell className="h-5 w-5 text-muted-foreground" />
-        </Button>
+        <NotificationsDropdown />
 
         <Button
           className="hidden h-9 gap-2 rounded-full px-4 font-medium sm:inline-flex"
