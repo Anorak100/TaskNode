@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { ArrowLeft, Plus, Search, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,6 +34,9 @@ function formatDueDate(value: string | null) {
 export function ProjectTasksPage() {
   const navigate = useNavigate()
   const { projectId } = useParams<{ projectId: string }>()
+  const [searchParams] = useSearchParams()
+  const targetTaskId = searchParams.get("task")
+
   const [project, setProject] = useState<ProjectRecord | null>(null)
   const [tasks, setTasks] = useState<TaskRecord[]>([])
   const [selectedTask, setSelectedTask] = useState<TaskRecord | null>(null)
@@ -56,6 +59,10 @@ export function ProjectTasksPage() {
       setProject(projectData)
       setTasks(taskData)
       setSelectedTask((current) => {
+        if (targetTaskId) {
+          const target = taskData.find((task) => task.id === targetTaskId)
+          if (target) return target
+        }
         if (current && taskData.some((task) => task.id === current.id)) return current
         return taskData[0] ?? null
       })
@@ -64,6 +71,18 @@ export function ProjectTasksPage() {
       setError(requestError instanceof Error ? requestError.message : "Unable to load project tasks")
     }
   }
+
+  useEffect(() => {
+    if (targetTaskId && tasks.length > 0) {
+      const target = tasks.find((t) => t.id === targetTaskId)
+      if (target) {
+        setSelectedTask(target)
+        if (target.status === "TODO") setActiveTab("To Do")
+        else if (target.status === "IN_PROGRESS") setActiveTab("In Progress")
+        else if (target.status === "DONE") setActiveTab("Completed")
+      }
+    }
+  }, [targetTaskId, tasks])
 
   useEffect(() => {
     void loadData()

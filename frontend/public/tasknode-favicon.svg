@@ -1,18 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" fill="none">
   <defs>
-    <linearGradient id="blue" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0f54e8"/>
-      <stop offset="1" stop-color="#2563eb"/>
+    <linearGradient id="blue" x1="300" y1="250" x2="850" y2="850" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#17377E"/>
+      <stop offset="0.55" stop-color="#124DDA"/>
+      <stop offset="1" stop-color="#075CFF"/>
     </linearGradient>
-    <linearGradient id="green" x1="35" y1="29" x2="55" y2="51" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22c98b"/>
-      <stop offset="1" stop-color="#10b981"/>
+    <linearGradient id="green" x1="620" y1="430" x2="890" y2="650" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08B77A"/>
+      <stop offset="1" stop-color="#10C58A"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="455" y1="575" x2="500" y2="635" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6D36E8"/>
+      <stop offset="1" stop-color="#8B43E8"/>
     </linearGradient>
   </defs>
-  <path fill="url(#blue)" d="M14 5h28c6.6 0 12 5.4 12 12v10.5l-8 8V17a4 4 0 0 0-4-4H18a4 4 0 0 0-4 4v30a4 4 0 0 0 4 4h15v8H14C7.4 59 2 53.6 2 47V17C2 10.4 7.4 5 14 5Z"/>
-  <circle cx="23" cy="24" r="3.5" fill="#2563eb"/>
-  <circle cx="23" cy="34" r="3.5" fill="#10b981"/>
-  <circle cx="23" cy="44" r="3.5" fill="#7c3aed"/>
-  <path d="M31 24h9M31 34h9M31 44h6" stroke="#10255a" stroke-width="4" stroke-linecap="round"/>
-  <path fill="url(#green)" d="m30.3 43.2 6.1-6.1 5.2 5.2L51.7 32a5 5 0 0 1 7.1 7.1L45.2 52.8a5 5 0 0 1-7.1 0l-7.8-7.8a5 5 0 0 1 0-7.1Z"/>
+
+  <!-- White background -->
+  <rect width="1200" height="1200" fill="white"/>
+
+  <!-- Main document/checklist mark -->
+  <path
+    d="M365 270
+       C315 270 275 310 275 360
+       V710
+       C275 760 315 800 365 800
+       H525
+       V720
+       H365
+       C359 720 355 716 355 710
+       V360
+       C355 354 359 350 365 350
+       H760
+       C766 350 770 354 770 360
+       V465
+       L850 385
+       V360
+       C850 310 810 270 760 270
+       H365Z"
+    fill="url(#blue)"
+  />
+
+  <!-- Lower folded/page accent -->
+  <path
+    d="M650 800
+       H760
+       C810 800 850 760 850 710
+       V585
+       L770 665
+       V710
+       C770 716 766 720 760 720
+       H650
+       V800Z"
+    fill="url(#blue)"
+  />
+
+  <!-- Fold shadow -->
+  <path d="M650 800 L770 680 V710 C770 716 766 720 760 720 H650 V800Z" fill="#102D68"/>
+
+  <!-- Checklist dots -->
+  <circle cx="430" cy="430" r="25" fill="#1461F5"/>
+  <circle cx="430" cy="530" r="25" fill="#08BA80"/>
+  <circle cx="430" cy="630" r="25" fill="url(#purple)"/>
+
+  <!-- Checklist lines -->
+  <rect x="485" y="414" width="150" height="22" rx="11" fill="#122E69"/>
+  <rect x="485" y="514" width="125" height="22" rx="11" fill="#122E69"/>
+  <rect x="485" y="614" width="125" height="22" rx="11" fill="#122E69"/>
+
+  <!-- Green completion check -->
+  <path
+    d="M675 535
+       L735 595
+       L875 455"
+    stroke="url(#green)"
+    stroke-width="55"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Tagline -->
+  <text x="600" y="915"
+        text-anchor="middle"
+        font-family="Inter, Arial, Helvetica, sans-serif"
+        font-size="34"
+        font-weight="500"
+        letter-spacing="0.2">
+    <tspan fill="#24385F">Manage tasks. </tspan>
+    <tspan fill="#08B77A" font-weight="600">Stay organized.</tspan>
+    <tspan fill="#24385F"> Get things done.</tspan>
+  </text>
 </svg>

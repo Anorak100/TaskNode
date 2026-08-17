@@ -102,13 +102,15 @@ export function isNotificationRead(id: string) {
 }
 
 export async function getNotifications(): Promise<AppNotification[]> {
-  const projects = await fetchJson<ProjectRecord[]>("/api/projects")
-  const projectTaskSets = await Promise.all(
-    projects.map(async (project) => {
-      const tasks = await fetchJson<TaskRecord[]>(`/api/projects/${project.id}/tasks`)
-      return { project, tasks }
-    })
-  )
+  const [projects, allTasks] = await Promise.all([
+    fetchJson<ProjectRecord[]>("/api/projects"),
+    fetchJson<TaskRecord[]>("/api/tasks"),
+  ])
+
+  const projectTaskSets = projects.map((project) => {
+    const tasks = allTasks.filter((task) => task.projectId === project.id)
+    return { project, tasks }
+  })
 
   const today = startOfDay(new Date())
   const notifications: AppNotification[] = []
