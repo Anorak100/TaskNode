@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
+import searchRoutes from './routes/search.routes.js';
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/projects/:projectId/tasks', projectTasksRouter);
 app.use('/api/tasks', taskRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/search', searchRoutes);
 
 app.use(errorHandler)
 
