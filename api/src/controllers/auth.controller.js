@@ -1,6 +1,7 @@
 import prisma from '../config/db.js';
 import { hashPassword, comparePassword } from '../utils/password.js';
 import { signToken } from '../utils/jwt.js';
+import { sendPasswordResetOtp } from '../utils/email.js';
 import { z } from 'zod';
 import { randomInt } from 'node:crypto';
 
@@ -87,9 +88,10 @@ async function requestPasswordReset(req, res, next) {
         update: { codeHash, expiresAt, createdAt: new Date() },
       });
 
-      // Replace this development-only output with your email provider in production.
-      if (process.env.NODE_ENV !== 'production') {
-        console.info(`[password reset] ${user.email}: ${code} (expires ${expiresAt.toISOString()})`);
+      try {
+        await sendPasswordResetOtp({ email: user.email, code, expiresInMinutes: 10 });
+      } catch (error) {
+        console.error('Failed to send password reset email:', error);
       }
     }
 
