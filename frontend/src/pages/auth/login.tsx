@@ -10,6 +10,7 @@ export function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSignOutNotice, setShowSignOutNotice] = useState(false)
@@ -34,7 +35,7 @@ export function LoginPage() {
     setIsSubmitting(true)
 
     try {
-      await loginUser(email, password)
+      await loginUser(email, password, rememberMe)
       window.location.replace("/")
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to sign in")
@@ -107,7 +108,12 @@ export function LoginPage() {
 
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 text-muted-foreground">
-                  <input type="checkbox" className="h-4 w-4 rounded border-input" />
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(event) => setRememberMe(event.target.checked)}
+                    className="h-4 w-4 rounded border-input"
+                  />
                   Remember me
                 </label>
                 <Link to="/forgot-password" className="text-primary hover:underline">

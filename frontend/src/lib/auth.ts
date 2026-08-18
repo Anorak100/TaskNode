@@ -1,6 +1,8 @@
 const API_BASE_URL = "http://localhost:3000"
 const TOKEN_KEY = "task-manager-token"
 const USER_KEY = "task-manager-user"
+const SESSION_TOKEN_KEY = "task-manager-session-token"
+const SESSION_USER_KEY = "task-manager-session-user"
 
 export type AuthUser = {
   id: number
@@ -13,13 +15,25 @@ export type LoginResponse = {
   user: AuthUser
 }
 
+function readStorageValue(storage: Storage, key: string) {
+  return storage.getItem(key)
+}
+
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY)
+  const localToken = readStorageValue(localStorage, TOKEN_KEY)
+  if (localToken) return localToken
+
+  return readStorageValue(sessionStorage, SESSION_TOKEN_KEY)
 }
 
 export function getStoredUser(): AuthUser | null {
-  const user = localStorage.getItem(USER_KEY)
-  return user ? (JSON.parse(user) as AuthUser) : null
+  const localUser = readStorageValue(localStorage, USER_KEY)
+  if (localUser) {
+    return JSON.parse(localUser) as AuthUser
+  }
+
+  const sessionUser = readStorageValue(sessionStorage, SESSION_USER_KEY)
+  return sessionUser ? (JSON.parse(sessionUser) as AuthUser) : null
 }
 
 export function isAuthenticated() {
@@ -29,6 +43,8 @@ export function isAuthenticated() {
 export function logout() {
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(USER_KEY)
+  sessionStorage.removeItem(SESSION_TOKEN_KEY)
+  sessionStorage.removeItem(SESSION_USER_KEY)
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -41,7 +57,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return data as T
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string, rememberMe = true) {
   const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: {
@@ -51,8 +67,18 @@ export async function loginUser(email: string, password: string) {
   })
 
   const data = await parseResponse<LoginResponse>(response)
-  localStorage.setItem(TOKEN_KEY, data.token)
-  localStorage.setItem(USER_KEY, JSON.stringify(data.user))
+
+  const targetStorage = rememberMe ? localStorage : sessionStorage
+  const tokenKey = rememberMe ? TOKEN_KEY : SESSION_TOKEN_KEY
+  const userKey = rememberMe ? USER_KEY : SESSION_USER_KEY
+
+  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(USER_KEY)
+  sessionStorage.removeItem(SESSION_TOKEN_KEY)
+  sessionStorage.removeItem(SESSION_USER_KEY)
+
+  targetStorage.setItem(tokenKey, data.token)
+  targetStorage.setItem(userKey, JSON.stringify(data.user))
 
   return data
 }
