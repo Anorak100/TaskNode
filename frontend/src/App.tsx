@@ -9,6 +9,7 @@ import { NewProjectPage } from '@/pages/projects/new-project'
 import { ProjectTasksPage } from '@/pages/projects/project-tasks'
 import { CalendarPage } from '@/pages/calendar'
 import { AnalyticsPage } from '@/pages/analytics'
+import { SettingsPage } from '@/pages/settings'
 import { LandingPage } from '@/pages/landing'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
 import { isAuthenticated } from '@/lib/auth'
@@ -26,6 +27,7 @@ function PageTitle() {
     '/projects/new': 'New Project',
     '/calendar': 'Calendar',
     '/analytics': 'Analytics',
+    '/settings': 'Settings',
   }
   const pageTitle = titles[pathname] ?? (pathname.startsWith('/projects/') ? 'Project Tasks' : pathname === '/' && isAuthenticated() ? 'Dashboard' : '')
 
@@ -73,6 +75,10 @@ function App() {
           <Route
             path="/analytics"
             element={isAuthenticated() ? <AppLayout><AnalyticsPage /></AppLayout> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/settings"
+            element={isAuthenticated() ? <AppLayout><SettingsPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

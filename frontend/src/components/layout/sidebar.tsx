@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "@/components/theme-provider"
-import { getStoredUser, logout } from "@/lib/auth"
+import { getGeneratedAvatarUrl, getStoredUser, logout } from "@/lib/auth"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useNavigate, useLocation } from "react-router-dom"
@@ -112,7 +112,7 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
         </div>
         <div className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 hover:bg-secondary/50">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={`https://i.pravatar.cc/150?u=${encodeURIComponent(user?.email || "tasknode")}`} alt={user?.name || "User"} />
+            <AvatarImage src={user?.avatar || getGeneratedAvatarUrl(user?.email || "tasknode")} alt={user?.name || "User"} />
             <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
               {user?.name
                 ?.split(" ")

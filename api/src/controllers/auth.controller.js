@@ -28,6 +28,10 @@ const resetPasswordSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+const updateProfileSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').optional(),
+});
+
 async function register(req, res, next) {
   try {
     const { email, password, name } = registerSchema.parse(req.body);
@@ -38,9 +42,10 @@ async function register(req, res, next) {
     }
 
     const passwordHash = await hashPassword(password);
+    const avatar = `https://i.pravatar.cc/150?u=${encodeURIComponent(email)}`;
     const user = await prisma.user.create({
-      data: { email, passwordHash, name },
-      select: { id: true, email: true, name: true, createdAt: true },
+      data: { email, passwordHash, name, avatar },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true },
     });
 
     res.status(201).json(user);
@@ -65,7 +70,46 @@ async function login(req, res, next) {
 
     const token = signToken({ sub: user.id, email: user.email });
 
-    res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
+    const avatar = user.avatar ?? `https://i.pravatar.cc/150?u=${encodeURIComponent(user.email)}`;
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateUserProfile(req, res, next) {
+  try {
+    const payload = updateProfileSchema.parse(req.body);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        ...(payload.name !== undefined ? { name: payload.name.trim() } : {}),
+      },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true },
+    });
+
+    const generatedAvatar = `https://i.pravatar.cc/150?u=${encodeURIComponent(updatedUser.email)}`;
+    const token = signToken({ sub: updatedUser.id, email: updatedUser.email });
+
+    res.json({
+      token,
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        avatar: updatedUser.avatar ?? generatedAvatar,
+      },
+    });
   } catch (err) {
     next(err);
   }
@@ -127,4 +171,4 @@ async function resetPassword(req, res, next) {
   }
 }
 
-export { register, login, requestPasswordReset, resetPassword }
+export { register, login, requestPasswordReset, resetPassword, updateUserProfile }

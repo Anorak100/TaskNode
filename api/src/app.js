@@ -4,9 +4,11 @@ import { authenticate } from './middleware/auth.js';
 import projectRoutes from './routes/projects.routes.js'
 import morgan from 'morgan';
 import { errorHandler } from './middleware/errorHandler.js';
+import prisma from './config/db.js';
 
 import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
 import searchRoutes from './routes/search.routes.js';
+import { updateUserProfile } from './controllers/auth.controller.js';
 
 const app = express();
 
@@ -40,9 +42,24 @@ app.use('/api/search', searchRoutes);
 
 app.use(errorHandler)
 
-app.get('/api/me', authenticate, (req, res) => {
-  res.json({ user: req.user });
+app.get('/api/me', authenticate, async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    next(err);
+  }
 });
+
+app.put('/api/me', authenticate, updateUserProfile);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
