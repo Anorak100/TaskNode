@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000"
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 const TOKEN_KEY = "task-manager-token"
 const USER_KEY = "task-manager-user"
 const SESSION_TOKEN_KEY = "task-manager-session-token"

@@ -1,7 +1,7 @@
 import { getStoredToken } from "@/lib/auth"
 import type { TaskRecord } from "@/lib/dashboard-data"
 
-const API_BASE_URL = "http://localhost:3000"
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 export type AnalyticsPeriod = 7 | 30 | 90
 
