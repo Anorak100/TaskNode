@@ -1,16 +1,22 @@
 # TaskNode
 
-TaskNode is a full-stack task and project management app built with a React + TypeScript frontend and an Express + Prisma backend. It helps users manage projects, track task status, handle due dates, and maintain account-level settings with secure authentication.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-success" alt="Status" />
+  <img src="https://img.shields.io/badge/Stack-React%20%2B%20Node.js-61DAFB" alt="Stack" />
+  <img src="https://img.shields.io/badge/DB-PostgreSQL-336791" alt="Database" />
+  <img src="https://img.shields.io/badge/Auth-JWT%20%2B%20bcrypt-8B5CF6" alt="Auth" />
+</p>
 
-## Overview
+TaskNode is a sleek productivity app for managing projects, tasks, deadlines, and account settings in one place. It combines a modern React frontend with a secure Express + Prisma backend to give teams and individuals a clear, focused workflow.
 
-- Project-based organization for work and personal planning
-- Task lifecycle tracking: To do, In progress, and Done
-- Due-date visibility and project summaries
-- Secure authentication with JWT
-- Password reset flow with OTP and Resend email delivery
-- Theme-aware dashboard and responsive UI
-- Prisma-powered PostgreSQL data layer
+## Why TaskNode
+
+- Organize work into projects with clearly scoped tasks
+- Track status through To Do, In Progress, and Done
+- Keep due dates visible and actionable
+- Use secure authentication and password reset flows
+- Customize the experience through theme and settings controls
+- Keep everything backed by a PostgreSQL database
 
 ## Tech Stack
 
@@ -20,8 +26,8 @@ TaskNode is a full-stack task and project management app built with a React + Ty
 - Vite
 - React Router
 - Tailwind CSS
-- shadcn-inspired UI primitives
-- Lucide icons
+- shadcn-inspired UI building blocks
+- Lucide React icons
 
 ### Backend
 - Node.js
@@ -29,9 +35,20 @@ TaskNode is a full-stack task and project management app built with a React + Ty
 - Prisma ORM
 - PostgreSQL
 - JWT authentication
-- bcrypt hashing
+- bcrypt password hashing
 - Zod validation
-- Resend for transactional emails
+- Resend email delivery
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[React Frontend] --> B[Express API]
+    B --> C[Prisma ORM]
+    C --> D[PostgreSQL Database]
+    B --> E[Resend Email Service]
+    A --> F[Browser Storage / Auth Session]
+```
 
 ## Repository Structure
 
@@ -51,21 +68,22 @@ Task Manager/
 │   ├── pnpm-lock.yaml
 │   └── README.md
 ├── README.md
-└── .gitignore
+├── .gitignore
+└── .env.example (if added later)
 ```
 
 ## Prerequisites
 
-Before starting, make sure you have:
+Before you begin, ensure you have:
 
-- Node.js 18 or newer
-- pnpm 9+ recommended
-- PostgreSQL database (or a managed Postgres provider such as Neon)
-- A Resend API key for password-reset emails
+- Node.js 18+
+- pnpm 9+
+- PostgreSQL database access
+- Resend API key for password reset emails
 
 ## Environment Setup
 
-Create an environment file in the API app at `api/.env` with the following values:
+Create an environment file at `api/.env` with the following values:
 
 ```env
 DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database>?sslmode=require&channel_binding=require"
@@ -76,14 +94,13 @@ RESEND_API_KEY="your_resend_api_key"
 ```
 
 ### Notes
-- `DATABASE_URL` must point to a live PostgreSQL database.
-- `JWT_SECRET` should be a long random value.
-- `RESEND_API_KEY` is used for password reset emails.
-- `PORT` is the backend port for the API server.
+- `DATABASE_URL` must point to a valid PostgreSQL database.
+- `JWT_SECRET` should be a long random secret.
+- `RESEND_API_KEY` is required for OTP password-reset emails.
 
-## Install Dependencies
+## Installation
 
-From the root of the project:
+Install dependencies for both apps:
 
 ```bash
 cd api && pnpm install
@@ -92,7 +109,7 @@ cd ../frontend && pnpm install
 
 ## Database Setup
 
-Generate the Prisma client and sync the database schema:
+Generate Prisma client and sync the schema:
 
 ```bash
 cd api
@@ -100,28 +117,28 @@ pnpm exec prisma generate
 pnpm exec prisma db push
 ```
 
-If you are using migrations instead of push, use:
+If you are using migrations instead of `db push`:
 
 ```bash
 pnpm exec prisma migrate dev
 ```
 
-## Run the App
+## Running the Application
 
-### Start the backend
+### 1) Start the backend
 
 ```bash
 cd api
 pnpm run dev
 ```
 
-The API runs on:
+The API will run on:
 
 ```text
 http://localhost:3000
 ```
 
-### Start the frontend
+### 2) Start the frontend
 
 In a separate terminal:
 
@@ -130,7 +147,7 @@ cd frontend
 pnpm run dev
 ```
 
-The frontend runs on:
+The frontend will run on:
 
 ```text
 http://localhost:5173
@@ -138,7 +155,7 @@ http://localhost:5173
 
 ## Available Scripts
 
-### API scripts
+### API
 
 ```bash
 pnpm run dev
@@ -148,7 +165,7 @@ pnpm run prisma:generate
 pnpm run studio
 ```
 
-### Frontend scripts
+### Frontend
 
 ```bash
 pnpm run dev
@@ -159,26 +176,24 @@ pnpm run preview
 ## Core Features
 
 ### Authentication
-- User signup and login
-- JWT-based session handling
+- Sign up and sign in
+- JWT-based secure sessions
 - Password reset via OTP email code
-- Remember-me session persistence in the browser
+- Remember-me browser persistence
 
-### Projects and Tasks
-- Create projects and assign tasks
-- Track task status across workflow stages
-- Add due dates and project summaries
-- Search and browse project task data
+### Project Management
+- Create and organize projects
+- Add tasks with statuses and due dates
+- View project-level task context
+- Search and browse tasks efficiently
 
-### User management
-- Profile name updates persisted to the database
-- Account settings page
-- Theme preference controls
-- Data export and sign-out flows
+### User Experience
+- Dashboard overview and analytics-like activity cards
+- Theme switching
+- Account settings and profile management
+- Responsive layout for desktop and smaller screens
 
-## API Highlights
-
-Main API routes include:
+## API Routes
 
 ```text
 POST /api/auth/register
@@ -195,35 +210,35 @@ PUT  /api/tasks/:taskId
 DELETE /api/tasks/:taskId
 ```
 
-## Production Notes
+## Production Considerations
 
-- Use a strong, unique `JWT_SECRET` in production.
-- Store secrets only in environment variables, not in source control.
-- Use a managed PostgreSQL service for production data persistence.
-- Ensure Resend is configured correctly for outbound email delivery.
-- Consider enabling HTTPS and additional security hardening before deployment.
+- Use a strong random `JWT_SECRET` in production
+- Keep all secrets in environment variables
+- Use a managed Postgres provider for production deployment
+- Configure Resend properly for outgoing emails
+- Enable HTTPS and additional hardening before public release
 
 ## Contributing
 
-1. Create a feature branch.
-2. Make focused changes.
-3. Verify the frontend build and backend logic.
-4. Commit with a clear message.
-5. Open a pull request for review.
+1. Create a feature branch
+2. Make focused changes
+3. Validate the relevant build or behavior
+4. Commit with a clear message
+5. Open a pull request for review
 
 ## License
 
-This project is currently configured for internal development use. Update the license before production deployment if required.
+This project is currently intended for internal development. If you plan to ship it publicly or commercially, add an appropriate open-source or commercial license before deployment.
 
 ## Support
 
-For local troubleshooting, check:
+If you run into setup issues, check:
 
 - backend logs in the API terminal
-- frontend console output in the browser dev tools
-- Prisma connection status and database URL validity
-- Resend API key validity for password reset emails
+- browser console output for frontend issues
+- Prisma connection and database URL validity
+- Resend API key validity for reset emails
 
 ---
 
-Built with Next-generation task management workflows in mind, TaskNode is designed to be straightforward to run locally while remaining scalable enough for a real product workflow.
+TaskNode is designed to be easy to run locally while still feeling like a real product experience for daily task and project management.
