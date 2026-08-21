@@ -73,11 +73,19 @@ function formatDueLabel(dueDate: string) {
 function getReadIds(): Set<string> {
   try {
     const user = getStoredUser()
-    const userKey = user?.id || user?.email || "guest"
-    const raw = localStorage.getItem(`${READ_IDS_KEY_PREFIX}:${userKey}`)
-    if (!raw) return new Set()
-    const parsed = JSON.parse(raw)
-    return new Set(Array.isArray(parsed) ? parsed : [])
+    const emailKey = user?.email.trim().toLowerCase() || "guest"
+    const keys = [`${READ_IDS_KEY_PREFIX}:${emailKey}`]
+    if (user?.id) keys.push(`${READ_IDS_KEY_PREFIX}:${user.id}`)
+
+    const ids = new Set<string>()
+    for (const key of keys) {
+      const raw = localStorage.getItem(key)
+      if (!raw) continue
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) parsed.forEach((id) => ids.add(id))
+    }
+
+    return ids
   } catch {
     return new Set()
   }
@@ -85,7 +93,7 @@ function getReadIds(): Set<string> {
 
 function saveReadIds(ids: Set<string>) {
   const user = getStoredUser()
-  const userKey = user?.id || user?.email || "guest"
+  const userKey = user?.email.trim().toLowerCase() || "guest"
   localStorage.setItem(`${READ_IDS_KEY_PREFIX}:${userKey}`, JSON.stringify([...ids]))
 }
 
