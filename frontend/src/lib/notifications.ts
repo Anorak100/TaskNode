@@ -1,7 +1,7 @@
-import { getStoredToken } from "@/lib/auth"
+import { getStoredToken, getStoredUser } from "@/lib/auth"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
-const READ_IDS_KEY = "tasknode-notification-read-ids"
+const READ_IDS_KEY_PREFIX = "tasknode-notification-read-ids"
 
 type ProjectRecord = {
   id: string
@@ -72,7 +72,9 @@ function formatDueLabel(dueDate: string) {
 
 function getReadIds(): Set<string> {
   try {
-    const raw = localStorage.getItem(READ_IDS_KEY)
+    const user = getStoredUser()
+    const userKey = user?.id || user?.email || "guest"
+    const raw = localStorage.getItem(`${READ_IDS_KEY_PREFIX}:${userKey}`)
     if (!raw) return new Set()
     const parsed = JSON.parse(raw)
     return new Set(Array.isArray(parsed) ? parsed : [])
@@ -82,7 +84,9 @@ function getReadIds(): Set<string> {
 }
 
 function saveReadIds(ids: Set<string>) {
-  localStorage.setItem(READ_IDS_KEY, JSON.stringify([...ids]))
+  const user = getStoredUser()
+  const userKey = user?.id || user?.email || "guest"
+  localStorage.setItem(`${READ_IDS_KEY_PREFIX}:${userKey}`, JSON.stringify([...ids]))
 }
 
 export function markNotificationRead(id: string) {
@@ -202,7 +206,8 @@ export async function getNotifications(): Promise<AppNotification[]> {
   }
 
   const priorityOrder = { high: 0, medium: 1, low: 2 }
-  return notifications.sort((a, b) => {
+  const readIds = getReadIds()
+  return notifications.filter((notification) => !readIds.has(notification.id)).sort((a, b) => {
     const byPriority = priorityOrder[a.priority] - priorityOrder[b.priority]
     if (byPriority !== 0) return byPriority
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

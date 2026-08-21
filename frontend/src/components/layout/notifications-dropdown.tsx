@@ -112,16 +112,22 @@ export function NotificationsDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [open])
 
+  const removeNotification = (notificationId: string) => {
+    markNotificationRead(notificationId)
+    setNotifications((current) => current.filter((notification) => notification.id !== notificationId))
+    setUnreadCount((current) => Math.max(0, current - 1))
+  }
+
   const handleNotificationClick = (notification: AppNotification) => {
     markNotificationRead(notification.id)
-    setUnreadCount(getUnreadCount(notifications))
-    setReadVersion((v) => v + 1)
+    removeNotification(notification.id)
     setOpen(false)
     navigate(notification.href)
   }
 
   const handleMarkAllRead = () => {
-    markAllNotificationsRead(notifications.map((n) => n.id))
+    markAllNotificationsRead(notifications.map((notification) => notification.id))
+    setNotifications([])
     setUnreadCount(0)
     setReadVersion((v) => v + 1)
   }
@@ -183,11 +189,9 @@ export function NotificationsDropdown() {
 
                   return (
                     <li key={notification.id}>
-                      <button
-                        type="button"
-                        onClick={() => handleNotificationClick(notification)}
+                      <div
                         className={cn(
-                          "flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-secondary/60",
+                          "flex w-full gap-3 px-3 py-3 text-left transition-colors hover:bg-secondary/60 sm:px-4",
                           isUnread && "bg-primary/5"
                         )}
                       >
@@ -195,14 +199,37 @@ export function NotificationsDropdown() {
                           <Icon className={cn("h-4 w-4", meta.iconColor)} />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-semibold leading-tight">{notification.title}</p>
+                          <div className="flex min-w-0 items-start justify-between gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleNotificationClick(notification)}
+                              className="min-w-0 text-left"
+                            >
+                              <p className="break-words text-sm font-semibold leading-tight">{notification.title}</p>
+                            </button>
                             {isUnread ? <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" /> : null}
                           </div>
-                          <p className="mt-1 text-sm text-muted-foreground">{notification.message}</p>
-                          <p className="mt-1 text-xs text-muted-foreground">{formatTimeAgo(notification.createdAt)}</p>
+                          <button
+                            type="button"
+                            onClick={() => handleNotificationClick(notification)}
+                            className="mt-1 block w-full break-words text-left text-sm leading-snug text-muted-foreground"
+                          >
+                            {notification.message}
+                          </button>
+                          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-xs text-muted-foreground">{formatTimeAgo(notification.createdAt)}</p>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 shrink-0 px-2 text-xs"
+                              onClick={() => removeNotification(notification.id)}
+                            >
+                              Mark as read
+                            </Button>
+                          </div>
                         </div>
-                      </button>
+                      </div>
                     </li>
                   )
                 })}
