@@ -44,7 +44,7 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r bg-background transition-transform duration-300 md:w-64",
+        "fixed left-0 top-0 z-40 flex h-[100dvh] w-72 flex-col border-r bg-background pb-[env(safe-area-inset-bottom)] transition-transform duration-300 md:w-64",
         open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       )}
     >
@@ -69,7 +69,8 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
+        <div className="flex flex-col gap-1">
         {navItems.map((item) => {
           const active = isActive(item.path, item.label)
           return (
@@ -101,9 +102,10 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
             </button>
           )
         })}
+        </div>
       </div>
 
-      <div className="mt-auto flex flex-col gap-4 border-t p-4">
+      <div className="flex shrink-0 flex-col gap-4 border-t p-4">
         <div className="flex items-center justify-between px-2">
           <span className="text-sm font-medium text-muted-foreground">
             {resolvedTheme === "dark" ? "Light mode" : "Dark mode"}

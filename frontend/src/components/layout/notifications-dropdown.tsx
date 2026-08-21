@@ -151,7 +151,7 @@ export function NotificationsDropdown() {
       </Button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(100vw-2rem,380px)] overflow-hidden rounded-2xl border bg-card shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed left-2 right-2 top-[4.5rem] z-50 max-h-[calc(100dvh-5.5rem)] overflow-hidden rounded-2xl border bg-card shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[380px] sm:max-h-none">
           <div className="flex items-center justify-between border-b px-4 py-3">
             <div>
               <h3 className="font-semibold">Notifications</h3>
@@ -164,7 +164,7 @@ export function NotificationsDropdown() {
             ) : null}
           </div>
 
-          <div className="max-h-[420px] overflow-y-auto">
+          <div className="max-h-[calc(100dvh-10rem)] overflow-y-auto sm:max-h-[420px]">
             {isLoading && notifications.length === 0 ? (
               <div className="flex items-center justify-center gap-2 px-4 py-10 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
