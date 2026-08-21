@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { AlertTriangle, Download, Palette, Shield, Bell, UserRound, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useTheme } from "@/components/theme-provider"
-import { getGeneratedAvatarUrl, getStoredUser, logout, updateCurrentUserProfile } from "@/lib/auth"
+import { getEmailInitial, getStoredUser, logout, updateCurrentUserProfile } from "@/lib/auth"
 
 const notificationDefaults = {
   task_overdue: true,
@@ -61,7 +61,7 @@ export function SettingsPage() {
     setProfile({
       name: user?.name ?? "",
       email: user?.email ?? "",
-      avatar: user?.avatar ?? getGeneratedAvatarUrl(user?.email ?? "tasknode"),
+      avatar: user?.avatar ?? "",
     })
 
     setNotifications(readStoredNotifications())
@@ -70,15 +70,6 @@ export function SettingsPage() {
   useEffect(() => {
     localStorage.setItem("tasknode-notification-preferences", JSON.stringify(notifications))
   }, [notifications])
-
-  const userInitials = useMemo(() => {
-    return profile.name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "TN"
-  }, [profile.name])
 
   const saveProfile = async () => {
     const trimmedName = profile.name.trim()
@@ -93,7 +84,7 @@ export function SettingsPage() {
         ...response.user,
         email: response.user.email,
         name: response.user.name,
-        avatar: response.user.avatar ?? getGeneratedAvatarUrl(response.user.email),
+        avatar: response.user.avatar ?? null,
       }
 
       writeStoredUser(nextUser)
@@ -158,8 +149,7 @@ export function SettingsPage() {
               <CardContent className="space-y-6 p-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16 border-2 border-primary/10">
-                    <AvatarImage src={profile.avatar || undefined} alt={profile.name || "User avatar"} />
-                    <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">{userInitials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">{getEmailInitial(profile.email)}</AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="text-sm font-medium">Profile picture</p>

@@ -16,8 +16,8 @@ export type LoginResponse = {
   user: AuthUser
 }
 
-export function getGeneratedAvatarUrl(email: string) {
-  return `https://i.pravatar.cc/150?u=${encodeURIComponent(email || "tasknode")}`
+export function getEmailInitial(email: string) {
+  return email.trim().charAt(0).toUpperCase() || "T"
 }
 
 function readStorageValue(storage: Storage, key: string) {
@@ -35,14 +35,14 @@ export function getStoredUser(): AuthUser | null {
   const localUser = readStorageValue(localStorage, USER_KEY)
   if (localUser) {
     const user = JSON.parse(localUser) as AuthUser
-    return { ...user, avatar: user.avatar || getGeneratedAvatarUrl(user.email) }
+    return user
   }
 
   const sessionUser = readStorageValue(sessionStorage, SESSION_USER_KEY)
   if (!sessionUser) return null
 
   const user = JSON.parse(sessionUser) as AuthUser
-  return { ...user, avatar: user.avatar || getGeneratedAvatarUrl(user.email) }
+  return user
 }
 
 export function isAuthenticated() {
@@ -107,10 +107,9 @@ export async function updateCurrentUserProfile(profile: { name?: string }, remem
   })
 
   const data = await parseResponse<LoginResponse>(response)
-  const user = { ...data.user, avatar: data.user.avatar || getGeneratedAvatarUrl(data.user.email) }
-  persistAuthSession(data.token, user, rememberMe)
+  persistAuthSession(data.token, data.user, rememberMe)
 
-  return { ...data, user }
+  return data
 }
 
 export async function registerUser(name: string, email: string, password: string) {

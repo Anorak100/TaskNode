@@ -277,7 +277,6 @@ export function ProjectTasksPage() {
                           autoComplete="off"
                           value={form.title}
                           onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-                          placeholder="Design homepage"
                           required
                         />
                       </div>
@@ -287,7 +286,6 @@ export function ProjectTasksPage() {
                           autoComplete="off"
                           value={form.description}
                           onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-                          placeholder="Design the new homepage for the website with modern UI and improved UX."
                           className="min-h-28 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
                         />
                       </div>

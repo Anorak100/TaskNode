@@ -106,10 +106,10 @@ export function CalendarPage() {
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading calendar…</p>}
 
-      <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div className="rounded-[2rem] border border-slate-200 bg-white p-2 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-950">
         <div className="grid grid-cols-7 gap-px rounded-t-xl bg-slate-200 dark:bg-slate-800">
           {DAYS_OF_WEEK.map(day => (
-            <div key={day} className="bg-white dark:bg-slate-950 p-3 text-center text-sm font-medium text-muted-foreground">
+              <div key={day} className="bg-white p-2 text-center text-[10px] font-medium text-muted-foreground sm:p-3 sm:text-sm dark:bg-slate-950">
               {day}
             </div>
           ))}
@@ -124,9 +124,9 @@ export function CalendarPage() {
             const isToday = dateStr === todayStr
 
             return (
-              <div 
-                key={i} 
-                className={`min-h-[120px] bg-white p-3 transition-colors hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-900 ${!cDay.isCurrentMonth ? 'opacity-40 bg-slate-50/50 dark:bg-slate-950/50' : ''}`}
+              <div
+                key={i}
+                className={`min-h-[76px] overflow-hidden bg-white p-1.5 transition-colors hover:bg-slate-50 sm:min-h-[120px] sm:p-3 dark:bg-slate-950 dark:hover:bg-slate-900 ${!cDay.isCurrentMonth ? 'opacity-40 bg-slate-50/50 dark:bg-slate-950/50' : ''}`}
               >
                 <div className="flex items-center justify-between">
                   <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ${isToday ? 'bg-blue-600 text-white' : ''}`}>
@@ -135,9 +135,13 @@ export function CalendarPage() {
                 </div>
                 {taskCount > 0 && (
                   <div className="mt-3">
-                    <div className="flex items-center gap-1.5 rounded-md bg-rose-50 px-2 py-1.5 text-xs font-medium text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
+                      <div className="flex min-w-0 items-center gap-1 rounded-md bg-rose-50 px-1.5 py-1 text-[10px] font-medium text-rose-600 sm:gap-1.5 sm:px-2 sm:py-1.5 sm:text-xs dark:bg-rose-950/50 dark:text-rose-400">
                       <div className="h-1.5 w-1.5 rounded-full bg-rose-500"></div>
-                      {taskCount} {taskCount === 1 ? 'task due' : 'tasks due'}
+                        <span className="flex min-w-0 flex-col truncate leading-tight sm:hidden">
+                          <span>{taskCount} {taskCount === 1 ? "task" : "tasks"}</span>
+                          <span>due today</span>
+                        </span>
+                        <span className="hidden truncate sm:inline">{taskCount} {taskCount === 1 ? 'task due' : 'tasks due'}</span>
                     </div>
                   </div>
                 )}
