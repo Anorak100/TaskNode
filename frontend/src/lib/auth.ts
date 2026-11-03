@@ -3,6 +3,7 @@ const TOKEN_KEY = "task-manager-token"
 const USER_KEY = "task-manager-user"
 const SESSION_TOKEN_KEY = "task-manager-session-token"
 const SESSION_USER_KEY = "task-manager-session-user"
+export const AUTH_EXPIRED_EVENT = "tasknode:auth-expired"
 
 export type AuthUser = {
   id: number
@@ -45,8 +46,22 @@ export function getStoredUser(): AuthUser | null {
   return user
 }
 
+function hasValidToken(token: string) {
+  const [, payloadSegment] = token.split(".")
+  try {
+    if (!payloadSegment) throw new Error("Invalid token")
+    const normalizedPayload = payloadSegment.replace(/-/g, "+").replace(/_/g, "/")
+    const paddedPayload = normalizedPayload.padEnd(Math.ceil(normalizedPayload.length / 4) * 4, "=")
+    const payload = JSON.parse(atob(paddedPayload)) as { exp?: unknown }
+    return typeof payload.exp === "number" && Number.isFinite(payload.exp) && Date.now() < payload.exp * 1000
+  } catch {
+    return false
+  }
+}
+
 export function isAuthenticated() {
-  return Boolean(getStoredToken())
+  const token = getStoredToken()
+  return Boolean(token && hasValidToken(token))
 }
 
 export function logout() {
@@ -54,6 +69,16 @@ export function logout() {
   localStorage.removeItem(USER_KEY)
   sessionStorage.removeItem(SESSION_TOKEN_KEY)
   sessionStorage.removeItem(SESSION_USER_KEY)
+}
+
+export async function authenticatedFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const response = await fetch(input, init)
+  if (response.status === 401) {
+    logout()
+    window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT))
+  }
+
+  return response
 }
 
 function persistAuthSession(token: string, user: AuthUser, rememberMe = true) {
@@ -97,7 +122,7 @@ export async function loginUser(email: string, password: string, rememberMe = tr
 }
 
 export async function updateCurrentUserProfile(profile: { name?: string }, rememberMe = Boolean(localStorage.getItem(TOKEN_KEY))) {
-  const response = await fetch(`${API_BASE_URL}/api/me`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/me`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

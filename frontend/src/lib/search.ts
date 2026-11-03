@@ -1,4 +1,4 @@
-import { getStoredToken } from "@/lib/auth"
+import { authenticatedFetch, getStoredToken } from "@/lib/auth"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
@@ -35,7 +35,7 @@ export async function searchWorkspace(query: string): Promise<SearchResults> {
     throw new Error("Authentication required")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

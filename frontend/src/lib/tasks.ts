@@ -1,4 +1,4 @@
-import { getStoredToken } from "@/lib/auth"
+import { authenticatedFetch, getStoredToken } from "@/lib/auth"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
@@ -36,7 +36,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 
 export async function getProject(projectId: string) {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects/${projectId}`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -48,7 +48,7 @@ export async function getProject(projectId: string) {
 
 export async function getProjectTasks(projectId: string) {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -60,7 +60,7 @@ export async function getProjectTasks(projectId: string) {
 
 export async function getAllTasks() {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/tasks`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -77,7 +77,7 @@ export async function createTask(projectId: string, payload: { title: string; de
     throw new Error("You must be signed in to create a task")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export async function updateTask(taskId: string, updates: Partial<{ title: strin
     throw new Error("You must be signed in to update a task")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export async function deleteTask(taskId: string) {
     throw new Error("You must be signed in to delete a task")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

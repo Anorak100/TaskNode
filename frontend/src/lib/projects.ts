@@ -1,4 +1,4 @@
-import { getStoredToken } from "@/lib/auth"
+import { authenticatedFetch, getStoredToken } from "@/lib/auth"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 
@@ -28,7 +28,7 @@ export async function createProject(name: string, description: string, icon?: st
     throw new Error("You must be signed in to create a project")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/projects`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export async function updateProject(projectId: string, updates: { name?: string;
     throw new Error("You must be signed in to update a project")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects/${projectId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export async function deleteProject(projectId: string) {
     throw new Error("You must be signed in to delete a project")
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/api/projects/${projectId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -1,4 +1,4 @@
-import { getStoredToken } from "@/lib/auth"
+import { authenticatedFetch, getStoredToken } from "@/lib/auth"
 import type { TaskRecord } from "@/lib/dashboard-data"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
@@ -67,7 +67,7 @@ export type AnalyticsData = {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

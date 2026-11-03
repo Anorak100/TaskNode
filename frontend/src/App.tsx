@@ -12,8 +12,35 @@ import { AnalyticsPage } from '@/pages/analytics'
 import { SettingsPage } from '@/pages/settings'
 import { LandingPage } from '@/pages/landing'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
-import { isAuthenticated } from '@/lib/auth'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AUTH_EXPIRED_EVENT, getStoredToken, isAuthenticated, logout } from '@/lib/auth'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+
+function AuthExpiryRedirect() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const checkExpiredAuth = () => {
+      if (getStoredToken() && !isAuthenticated()) {
+        logout()
+        navigate('/login', { replace: true })
+      }
+    }
+
+    const handleExpiredAuth = () => navigate('/login', { replace: true })
+    window.addEventListener(AUTH_EXPIRED_EVENT, handleExpiredAuth)
+    window.addEventListener('focus', checkExpiredAuth)
+    document.addEventListener('visibilitychange', checkExpiredAuth)
+    checkExpiredAuth()
+    return () => {
+      window.removeEventListener(AUTH_EXPIRED_EVENT, handleExpiredAuth)
+      window.removeEventListener('focus', checkExpiredAuth)
+      document.removeEventListener('visibilitychange', checkExpiredAuth)
+    }
+  }, [navigate])
+
+  return null
+}
 
 function PageTitle() {
   const { pathname } = useLocation()
@@ -39,46 +66,51 @@ function PageTitle() {
 }
 
 function App() {
+  const hadStoredToken = Boolean(getStoredToken())
+  const authenticated = isAuthenticated()
+  const expiredSession = hadStoredToken && !authenticated
+
   return (
     <ThemeProvider defaultTheme="system" storageKey="task-manager-theme">
       <BrowserRouter>
+        <AuthExpiryRedirect />
         <PageTitle />
         <Routes>
           <Route
             path="/login"
-            element={isAuthenticated() ? <Navigate to="/" replace /> : <LoginPage />}
+            element={authenticated ? <Navigate to="/" replace /> : <LoginPage />}
           />
           <Route
             path="/signup"
-            element={isAuthenticated() ? <Navigate to="/" replace /> : <SignupPage />}
+            element={authenticated ? <Navigate to="/" replace /> : <SignupPage />}
           />
-          <Route path="/forgot-password" element={isAuthenticated() ? <Navigate to="/" replace /> : <ForgotPasswordPage />} />
-          <Route path="/reset-password" element={isAuthenticated() ? <Navigate to="/" replace /> : <ResetPasswordPage />} />
+          <Route path="/forgot-password" element={authenticated ? <Navigate to="/" replace /> : <ForgotPasswordPage />} />
+          <Route path="/reset-password" element={authenticated ? <Navigate to="/" replace /> : <ResetPasswordPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
           <Route
             path="/"
-            element={isAuthenticated() ? <AppLayout><Dashboard /></AppLayout> : <LandingPage />}
+            element={authenticated ? <AppLayout><Dashboard /></AppLayout> : expiredSession ? <Navigate to="/login" replace /> : <LandingPage />}
           />
           <Route
             path="/projects/new"
-            element={isAuthenticated() ? <AppLayout><NewProjectPage /></AppLayout> : <Navigate to="/login" replace />}
+            element={authenticated ? <AppLayout><NewProjectPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route
             path="/projects/:projectId/tasks"
-            element={isAuthenticated() ? <AppLayout><ProjectTasksPage /></AppLayout> : <Navigate to="/login" replace />}
+            element={authenticated ? <AppLayout><ProjectTasksPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route
             path="/calendar"
-            element={isAuthenticated() ? <AppLayout><CalendarPage /></AppLayout> : <Navigate to="/login" replace />}
+            element={authenticated ? <AppLayout><CalendarPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route
             path="/analytics"
-            element={isAuthenticated() ? <AppLayout><AnalyticsPage /></AppLayout> : <Navigate to="/login" replace />}
+            element={authenticated ? <AppLayout><AnalyticsPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route
             path="/settings"
-            element={isAuthenticated() ? <AppLayout><SettingsPage /></AppLayout> : <Navigate to="/login" replace />}
+            element={authenticated ? <AppLayout><SettingsPage /></AppLayout> : <Navigate to="/login" replace />}
           />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
@@ -88,4 +120,3 @@ function App() {
 }
 
 export default App
-import { useEffect } from 'react'

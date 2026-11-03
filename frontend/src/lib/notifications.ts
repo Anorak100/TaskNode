@@ -1,4 +1,4 @@
-import { getStoredToken, getStoredUser } from "@/lib/auth"
+import { authenticatedFetch, getStoredToken, getStoredUser } from "@/lib/auth"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
 const READ_IDS_KEY_PREFIX = "tasknode-notification-read-ids"
@@ -36,7 +36,7 @@ export type AppNotification = {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const token = getStoredToken()
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
