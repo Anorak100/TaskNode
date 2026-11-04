@@ -18,14 +18,14 @@ This project combines a React frontend with an Express API and a Prisma-backed P
 - Backend: Node.js, Express
 - Database: PostgreSQL with Prisma
 - Auth: JWT + bcrypt
-- Email: Resend
+- Email: Sendliberty (Gmail inbox connected through OAuth)
 
 ## Prerequisites
 
 - Node.js 18+
 - pnpm
 - PostgreSQL database access
-- Resend API key
+- Sendliberty API key and a Gmail inbox connected in Sendliberty
 
 ## Environment setup
 
@@ -36,10 +36,13 @@ DATABASE_URL="postgresql://user:password@host:5432/database"
 JWT_SECRET="replace-with-a-long-random-secret"
 JWT_EXPIRES_IN="7d"
 PORT=3000
-RESEND_API_KEY="replace-with-your-resend-key"
+SENDLIBERTY_API_KEY="replace-with-your-sendliberty-api-key"
+SENDLIBERTY_FROM="your-connected-gmail-address"
 ```
 
-Keep all secrets in environment variables and never commit real credentials.
+Connect your Gmail or Google Workspace inbox in Sendliberty, generate an API key in its dashboard, and put the key and connected sender address in `api/.env`. Sendliberty uses the connected inbox as the sender; the backend sends `from`, `to`, `subject`, and `html` to `https://sendliberty.com/api/send`.
+
+Keep all secrets in environment variables and never commit real credentials. `api/.env.example` lists the required email settings.
 
 ## Local setup
 

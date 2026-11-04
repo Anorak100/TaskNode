@@ -5,14 +5,19 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function getResendClient() {
-  const apiKey = process.env.RESEND_API_KEY;
+function getSendlibertyConfig() {
+  const apiKey = process.env.SENDLIBERTY_API_KEY;
+  const from = process.env.SENDLIBERTY_FROM;
 
   if (!apiKey) {
-    throw new Error('RESEND_API_KEY is not configured.');
+    throw new Error('SENDLIBERTY_API_KEY is not configured.');
   }
 
-  return { apiKey };
+  if (!from) {
+    throw new Error('SENDLIBERTY_FROM is not configured.');
+  }
+
+  return { apiKey, from };
 }
 
 function escapeHtml(value = '') {
@@ -29,35 +34,43 @@ async function loadOtpTemplate() {
   return readFile(templatePath, 'utf8');
 }
 
-async function sendPasswordResetOtp({ email, code, expiresInMinutes }) {
-  const { apiKey } = getResendClient();
+async function sendTransactionalEmail({ to, subject, html }) {
+  const { apiKey, from } = getSendlibertyConfig();
 
-  const template = await loadOtpTemplate();
-  const html = template
-    .replace(/\{\{OTP_CODE\}\}/g, escapeHtml(code))
-    .replace(/\{\{EXPIRY_MINUTES\}\}/g, String(expiresInMinutes))
-    .replace(/\{\{EMAIL\}\}/g, escapeHtml(email));
-
-  const response = await fetch('https://api.resend.com/emails', {
+  const response = await fetch('https://sendliberty.com/api/send', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'onboarding@resend.dev',
-      to: [email],
-      subject: 'Your password reset code',
+      from,
+      to,
+      subject,
       html,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Resend email request failed: ${response.status} ${errorText}`);
+    throw new Error(`Sendliberty email request failed: ${response.status} ${errorText}`);
   }
 
   return response.json();
 }
 
-export { sendPasswordResetOtp };
+async function sendPasswordResetOtp({ email, code, expiresInMinutes }) {
+  const template = await loadOtpTemplate();
+  const html = template
+    .replace(/\{\{OTP_CODE\}\}/g, escapeHtml(code))
+    .replace(/\{\{EXPIRY_MINUTES\}\}/g, String(expiresInMinutes))
+    .replace(/\{\{EMAIL\}\}/g, escapeHtml(email));
+
+  return sendTransactionalEmail({
+    to: email,
+    subject: 'Your password reset code',
+    html,
+  });
+}
+
+export { sendPasswordResetOtp, sendTransactionalEmail };
