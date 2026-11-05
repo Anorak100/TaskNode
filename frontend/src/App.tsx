@@ -11,8 +11,11 @@ import { CalendarPage } from '@/pages/calendar'
 import { AnalyticsPage } from '@/pages/analytics'
 import { SettingsPage } from '@/pages/settings'
 import { LandingPage } from '@/pages/landing'
+import { AdminLoginPage } from '@/pages/admin/admin-login'
+import { AdminDashboardPage } from '@/pages/admin/admin-dashboard'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
 import { AUTH_EXPIRED_EVENT, getStoredToken, isAuthenticated, logout } from '@/lib/auth'
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
@@ -49,6 +52,8 @@ function PageTitle() {
     '/signup': 'Create account',
     '/forgot-password': 'Reset password',
     '/reset-password': 'Choose a new password',
+    '/admin/login': 'Administrator sign in',
+    '/admin': 'Admin overview',
     '/privacy': 'Privacy Policy',
     '/terms': 'Terms of Service',
     '/projects/new': 'New Project',
@@ -76,6 +81,14 @@ function App() {
         <AuthExpiryRedirect />
         <PageTitle />
         <Routes>
+          <Route
+            path="/admin/login"
+            element={isAdminAuthenticated() ? <Navigate to="/admin" replace /> : <AdminLoginPage />}
+          />
+          <Route
+            path="/admin"
+            element={isAdminAuthenticated() ? <AdminDashboardPage /> : <Navigate to="/admin/login" replace />}
+          />
           <Route
             path="/login"
             element={authenticated ? <Navigate to="/" replace /> : <LoginPage />}

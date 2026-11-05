@@ -9,6 +9,7 @@ import prisma from './config/db.js';
 
 import { projectTasksRouter, taskRouter } from './routes/tasks.routes.js';
 import searchRoutes from './routes/search.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import { updateUserProfile } from './controllers/auth.controller.js';
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/tasks', taskRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler)
 

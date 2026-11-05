@@ -38,11 +38,24 @@ JWT_EXPIRES_IN="7d"
 PORT=3000
 SENDLIBERTY_API_KEY="replace-with-your-sendliberty-api-key"
 SENDLIBERTY_FROM="your-connected-gmail-address"
+ADMIN_EMAIL="admin@example.com"
+ADMIN_PASSWORD_HASH="bcrypt-hash-of-a-strong-admin-password"
 ```
 
 Connect your Gmail or Google Workspace inbox in Sendliberty, generate an API key in its dashboard, and put the key and connected sender address in `api/.env`. Sendliberty uses the connected inbox as the sender; the backend sends `from`, `to`, `subject`, and `html` to `https://sendliberty.com/api/send`.
 
-Keep all secrets in environment variables and never commit real credentials. `api/.env.example` lists the required email settings.
+Keep all secrets in environment variables and never commit real credentials. `api/.env.example` lists the required backend settings.
+
+### Admin access
+
+The read-only admin dashboard is available at `/admin`, with a separate sign-in page at `/admin/login`. Configure `ADMIN_EMAIL` and `ADMIN_PASSWORD_HASH` in the backend environment (including the deployed API service). Generate the bcrypt hash locally using the API's installed `bcryptjs` package:
+
+```bash
+cd api
+node --input-type=module -e "import bcrypt from 'bcryptjs'; console.log(await bcrypt.hash('replace-with-a-strong-password', 12))"
+```
+
+Set the printed hash as `ADMIN_PASSWORD_HASH`; do not store the plaintext password in the repository. Admin sessions expire after four hours. The dashboard exposes aggregate usage metrics and user account metadata/activity counts, but not task titles or descriptions. Waitlist management is deferred until the waitlist API is available.
 
 ## Local setup
 
