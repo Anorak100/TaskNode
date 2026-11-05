@@ -48,7 +48,7 @@ Keep all secrets in environment variables and never commit real credentials. `ap
 
 ### Admin access
 
-The read-only admin dashboard is available at `/admin`, with a separate sign-in page at `/admin/login`. Configure `ADMIN_EMAIL` and `ADMIN_PASSWORD_HASH` in the backend environment (including the deployed API service). Generate the bcrypt hash locally using the API's installed `bcryptjs` package:
+The read-only admin dashboard is available at `/admin`, with a separate sign-in page at `/admin/login`. The sign-in page must be reachable before authentication; it exposes no admin data. The dashboard verifies the admin token with the backend before rendering, and admin API routes enforce the same authorization server-side. Configure `ADMIN_EMAIL` and `ADMIN_PASSWORD_HASH` in the backend environment (including the deployed API service). Generate the bcrypt hash locally using the API's installed `bcryptjs` package:
 
 ```bash
 cd api

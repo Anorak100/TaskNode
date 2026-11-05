@@ -15,9 +15,77 @@ import { AdminLoginPage } from '@/pages/admin/admin-login'
 import { AdminDashboardPage } from '@/pages/admin/admin-dashboard'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/pages/legal'
 import { AUTH_EXPIRED_EVENT, getStoredToken, isAuthenticated, logout } from '@/lib/auth'
-import { isAdminAuthenticated } from '@/lib/admin-auth'
+import { getAdminToken, logoutAdmin, validateAdminSession } from '@/lib/admin-auth'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+function AdminLoginRoute() {
+  const token = getAdminToken()
+  const [hasValidSession, setHasValidSession] = useState(false)
+  const [isChecking, setIsChecking] = useState(Boolean(token))
+
+  useEffect(() => {
+    if (!token) {
+      logoutAdmin()
+      setIsChecking(false)
+      return
+    }
+
+    let active = true
+    validateAdminSession()
+      .then(() => {
+        if (active) setHasValidSession(true)
+      })
+      .catch(() => {
+        if (active) logoutAdmin()
+      })
+      .finally(() => {
+        if (active) setIsChecking(false)
+      })
+
+    return () => { active = false }
+  }, [token])
+
+  if (isChecking) {
+    return <p role="status" className="p-8 text-center text-sm text-muted-foreground">Verifying administrator session...</p>
+  }
+  if (hasValidSession) return <Navigate to="/admin" replace />
+  return <AdminLoginPage />
+}
+
+function AdminDashboardRoute() {
+  const token = getAdminToken()
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    let active = true
+    if (!token) {
+      logoutAdmin()
+      setIsChecking(false)
+      return
+    }
+
+    validateAdminSession()
+      .then(() => {
+        if (active) setIsAuthorized(true)
+      })
+      .catch(() => {
+        if (active) logoutAdmin()
+      })
+      .finally(() => {
+        if (active) setIsChecking(false)
+      })
+
+    return () => { active = false }
+  }, [token])
+
+  if (isChecking) {
+    return <p role="status" className="p-8 text-center text-sm text-muted-foreground">Verifying administrator session...</p>
+  }
+  if (!isAuthorized) return <Navigate to="/admin/login" replace />
+  return <AdminDashboardPage />
+}
 
 function AuthExpiryRedirect() {
   const navigate = useNavigate()
@@ -83,11 +151,11 @@ function App() {
         <Routes>
           <Route
             path="/admin/login"
-            element={isAdminAuthenticated() ? <Navigate to="/admin" replace /> : <AdminLoginPage />}
+            element={<AdminLoginRoute />}
           />
           <Route
             path="/admin"
-            element={isAdminAuthenticated() ? <AdminDashboardPage /> : <Navigate to="/admin/login" replace />}
+            element={<AdminDashboardRoute />}
           />
           <Route
             path="/login"

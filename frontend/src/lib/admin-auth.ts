@@ -56,11 +56,6 @@ export function getAdminEmail() {
   return sessionStorage.getItem(ADMIN_EMAIL_KEY)
 }
 
-export function isAdminAuthenticated() {
-  const token = getAdminToken()
-  return Boolean(token && hasValidToken(token))
-}
-
 export function logoutAdmin() {
   sessionStorage.removeItem(ADMIN_TOKEN_KEY)
   sessionStorage.removeItem(ADMIN_EMAIL_KEY)
@@ -87,14 +82,24 @@ export async function loginAdmin(email: string, password: string) {
 
 export async function adminFetch<T>(path: string): Promise<T> {
   const token = getAdminToken()
+  if (!token || !hasValidToken(token)) {
+    logoutAdmin()
+    window.dispatchEvent(new Event(ADMIN_AUTH_EXPIRED_EVENT))
+    throw new Error("Admin authentication required")
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers: { Authorization: `Bearer ${token}` },
   })
   if (response.status === 401 || response.status === 403) {
     logoutAdmin()
     window.dispatchEvent(new Event(ADMIN_AUTH_EXPIRED_EVENT))
   }
   return parseResponse<T>(response)
+}
+
+export async function validateAdminSession() {
+  return adminFetch<{ admin: { email: string } }>("/api/admin/session")
 }
 
 export async function getAdminOverview() {
